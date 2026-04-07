@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat® ECS 200 Specification Navigator</title>
+  <style>
+    :root {
+      --cat-yellow: #FFCD11;
+      --cat-black: #1a1a1a;
+      --cat-dark: #2c2c2c;
+      --cat-gray: #3d3d3d;
+      --cat-light-gray: #e8e8e8;
+      --cat-white: #ffffff;
+      --cat-accent: #f5a623;
+      --sidebar-width: 340px;
+      --transition: 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f0f2f5;
+      color: var(--cat-black);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--cat-black);
+      color: var(--cat-white);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      transition: transform var(--transition);
+    }
+
+    .sidebar-header {
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .sidebar-header h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-header .subtitle {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .sidebar-search {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--cat-gray);
+    }
+
+    .sidebar-search input {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: var(--cat-gray);
+      color: var(--cat-white);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .sidebar-search input::placeholder { color: #888; }
+    .sidebar-search input:focus { background: #4a4a4a; }
+
+    .doc-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .doc-item {
+      padding: 14px 20px;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .doc-item:hover {
+      background: var(--cat-dark);
+      border-left-color: var(--cat-yellow);
+    }
+
+    .doc-item.active {
+      background: var(--cat-dark);
+      border-left-color: var(--cat-yellow);
+    }
+
+    .doc-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--cat-gray);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+
+    .doc-item.active .doc-icon { background: var(--cat-yellow); color: var(--cat-black); }
+
+    .doc-info h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .doc-info .doc-id {
+      font-size: 0.7rem;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .doc-info .doc-pages {
+      font-size: 0.7rem;
+      color: var(--cat-yellow);
+      margin-top: 2px;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--cat-white);
+      border-bottom: 1px solid #ddd;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+    }
+
+    .btn-primary:hover { background: #e6b800; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: var(--cat-light-gray);
+      color: var(--cat-black);
+    }
+
+    .btn-secondary:hover { background: #d0d0d0; }
+
+    .content {
+      padding: 32px;
+    }
+
+    /* Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .stat-info h4 { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-info .stat-value { font-size: 1.8rem; font-weight: 800; margin-top: 4px; }
+
+    /* Document detail view */
+    .doc-detail {
+      display: none;
+    }
+
+    .doc-detail.active { display: block; }
+
+    .doc-header-card {
+      background: linear-gradient(135deg, var(--cat-black) 0%, var(--cat-dark) 100%);
+      color: var(--cat-white);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-header-card::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: var(--cat-yellow);
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+
+    .doc-header-card .doc-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .doc-header-card .doc-number {
+      font-size: 0.9rem;
+      color: var(--cat-yellow);
+      margin-bottom: 16px;
+    }
+
+    .doc-header-card .doc-summary {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      opacity: 0.9;
+      max-width: 800px;
+    }
+
+    .doc-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .meta-badge {
+      background: rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sections */
+    .sections-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 20px;
+    }
+
+    .section-card {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: all var(--transition);
+      border-left: 4px solid var(--cat-yellow);
+      cursor: pointer;
+    }
+
+    .section-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-num {
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .section-desc {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .section-page {
+      font-size: 0.75rem;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .subsections {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .subsection {
+      padding: 8px 8px;
+      font-size: 0.82rem;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all var(--transition);
+    }
+
+    .subsection:hover { color: var(--cat-black); background: #fff8e1; }
+
+    .subsection .sub-page {
+      color: #aaa;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .open-at-page {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .open-at-page:hover { background: #e6b800; transform: translateY(-1px); }
+
+    .section-page-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-page-link .open-at-page { margin-left: 8px; }
+
+    /* Quick find */
+    .quick-find-results {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .quick-find-results.visible { display: block; }
+
+    .quick-find-results h3 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: var(--cat-black);
+    }
+
+    .search-result-item {
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      transition: all var(--transition);
+      border-left: 3px solid transparent;
+    }
+
+    .search-result-item:hover { background: #fff8e1; border-left-color: var(--cat-yellow); }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .result-doc { font-size: 0.72rem; color: #888; margin-top: 4px; }
+    .result-section { font-weight: 600; font-size: 0.9rem; }
+    .result-desc { font-size: 0.8rem; color: #666; margin-top: 6px; line-height: 1.5; }
+
+    .result-matches {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .result-match-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #555;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .result-match-item:hover { background: #fff3cd; }
+
+    .result-match-item .match-title { flex: 1; }
+
+    .result-doc-badge {
+      display: inline-block;
+      background: var(--cat-dark);
+      color: var(--cat-yellow);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+
+    /* Mobile menu toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 200;
+      background: var(--cat-yellow);
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    /* Overview tab */
+    .overview-section { margin-bottom: 32px; }
+    .overview-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+
+    .doc-overview-card {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all var(--transition);
+      border-left: 4px solid transparent;
+    }
+
+    .doc-overview-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      border-left-color: var(--cat-yellow);
+    }
+
+    .doc-overview-card h4 { font-size: 1.15rem; margin-bottom: 8px; }
+    .doc-overview-card .doc-id-badge {
+      display: inline-block;
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .doc-overview-card p { font-size: 0.88rem; color: #555; line-height: 1.7; }
+    .doc-overview-card .summary-lead { font-size: 0.92rem; color: #333; font-weight: 500; margin-bottom: 12px; line-height: 1.6; }
+
+    .key-topics {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .topic-tag {
+      background: #f0f2f5;
+      color: #555;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .detail-block {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 16px;
+      border-left: 3px solid var(--cat-yellow);
+    }
+
+    .detail-block h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cat-black);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .detail-block ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .detail-block ul li {
+      font-size: 0.82rem;
+      color: #555;
+      padding: 3px 0;
+      line-height: 1.5;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .detail-block ul li::before {
+      content: '▸';
+      color: var(--cat-yellow);
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 8px;
+    }
+
+    .spec-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    .spec-table td:first-child {
+      font-weight: 600;
+      color: var(--cat-black);
+      white-space: nowrap;
+      width: 40%;
+    }
+
+    .spec-table td:last-child {
+      color: #555;
+    }
+
+    .section-preview {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .section-preview h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cat-black);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .section-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 6px;
+    }
+
+    .section-preview-item {
+      font-size: 0.78rem;
+      color: #555;
+      padding: 5px 10px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .section-preview-item:hover { background: #fff3cd; }
+
+    .section-preview-item .sp-num {
+      font-weight: 700;
+      color: var(--cat-black);
+      min-width: 24px;
+    }
+
+    .xref-section {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .xref-section h5 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .xref-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .xref-badge {
+      font-size: 0.7rem;
+      background: var(--cat-dark);
+      color: var(--cat-yellow);
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .xref-badge:hover { background: var(--cat-black); transform: translateY(-1px); }
+
+    .overview-intro {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+      border-left: 4px solid var(--cat-yellow);
+    }
+
+    .overview-intro h3 { font-size: 1.1rem; margin-bottom: 12px; }
+    .overview-intro p { font-size: 0.9rem; color: #555; line-height: 1.7; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    .sidebar ::-webkit-scrollbar-thumb { background: #555; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .menu-toggle { display: block; }
+      .content { padding: 20px; }
+      .sections-container { grid-template-columns: 1fr; }
+    }
+
+    /* Print */
+    @media print {
+      .sidebar, .topbar, .menu-toggle { display: none; }
+      .main { margin-left: 0; }
+    }
+
+    .highlight { background: var(--cat-yellow); padding: 1px 4px; border-radius: 3px; }
+
+    /* Tab navigation */
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      background: var(--cat-white);
+      padding: 4px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      color: #666;
+    }
+
+    .tab-btn.active {
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+    }
+
+    .tab-btn:hover:not(.active) { background: #f0f2f5; }
+  </style>
+</head>
+<body>
+
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>Cat® ECS 200</h1>
+      <div class="subtitle">Specification Navigator</div>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="globalSearch" placeholder="Search all documents..." oninput="handleSearch(this.value)">
+    </div>
+    <div class="doc-list" id="docList">
+      <div class="doc-item active" data-doc="overview" onclick="showView('overview')">
+        <div class="doc-icon">📊</div>
+        <div class="doc-info">
+          <h3>Overview Dashboard</h3>
+          <div class="doc-id">All Documents Summary</div>
+        </div>
+      </div>
+      <div class="doc-item" data-doc="hw" onclick="showView('hw')">
+        <div class="doc-icon">🔧</div>
+        <div class="doc-info">
+          <h3>Controller Hardware Manual</h3>
+          <div class="doc-id">LEBE20713-01</div>
+          <div class="doc-pages">29 pages</div>
+        </div>
+      </div>
+      <div class="doc-item" data-doc="hmi" onclick="showView('hmi')">
+        <div class="doc-icon">🖥️</div>
+        <div class="doc-info">
+          <h3>HMI Manual</h3>
+          <div class="doc-id">LEBE20715-02</div>
+          <div class="doc-pages">280 pages</div>
+        </div>
+      </div>
+      <div class="doc-item" data-doc="sw" onclick="showView('sw')">
+        <div class="doc-icon">⚙️</div>
+        <div class="doc-info">
+          <h3>Software Operations Manual</h3>
+          <div class="doc-id">LEBE20716-02</div>
+          <div class="doc-pages">420 pages</div>
+        </div>
+      </div>
+      <div class="doc-item" data-doc="bop" onclick="showView('bop')">
+        <div class="doc-icon">🏭</div>
+        <div class="doc-info">
+          <h3>BOP Software Manual</h3>
+          <div class="doc-id">LEBE20720-00</div>
+          <div class="doc-pages">159 pages</div>
+        </div>
+      </div>
+      <div class="doc-item" data-doc="scada" onclick="showView('scada')">
+        <div class="doc-icon">📡</div>
+        <div class="doc-info">
+          <h3>SCADA Modbus Manual</h3>
+          <div class="doc-id">LEBE23522-00</div>
+          <div class="doc-pages">91 pages</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <h2 id="topbarTitle">Overview Dashboard</h2>
+      <div class="topbar-actions" id="topbarActions">
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Search results overlay -->
+      <div class="quick-find-results" id="searchResults">
+        <h3>🔍 Search Results <span id="resultCount"></span></h3>
+        <div id="resultsList"></div>
+      </div>
+
+      <!-- OVERVIEW VIEW -->
+      <div class="doc-detail active" id="view-overview">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fff3cd;color:#856404;">📄</div>
+            <div class="stat-info">
+              <h4>Total Documents</h4>
+              <div class="stat-value">5</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#d4edda;color:#155724;">📖</div>
+            <div class="stat-info">
+              <h4>Total Pages</h4>
+              <div class="stat-value">979</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#cce5ff;color:#004085;">📑</div>
+            <div class="stat-info">
+              <h4>Major Sections</h4>
+              <div class="stat-value">65+</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#f8d7da;color:#721c24;">©️</div>
+            <div class="stat-info">
+              <h4>Caterpillar</h4>
+              <div class="stat-value">2024–25</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Overview -->
+        <div class="overview-intro">
+          <h3>Cat® Energy Control System (ECS) 200 – Documentation Suite</h3>
+          <p>The Cat® ECS 200 is a paralleling generator set controller designed for multi-unit power systems in island and utility paralleling applications. Built on a single, versatile hardware platform, it supports a broad range of genset control scenarios — from standalone emergency power to complex multi-generator paralleling switchgear with automatic load management. The system is configured and monitored through a dedicated touchscreen HMI, the Cat Electronic Technician (ET) service tool, and remote SCADA (Modbus TCP/IP) connections.</p>
+          <p style="margin-top:10px;">This documentation suite comprises <strong>5 specification manuals totaling 979 pages</strong>, covering the controller hardware, HMI operator interface, core paralleling genset software, Balance of Plant (BOP) ancillary controls for CHP/container applications, and the SCADA Modbus data interface. Together they define the complete system from physical installation through software configuration to remote supervisory integration.</p>
+        </div>
+
+        <div class="overview-section">
+          <h3>Document Library — Detailed Summaries</h3>
+
+          <!-- ==================== HARDWARE ==================== -->
+          <div class="doc-overview-card" onclick="showView('hw')">
+            <div class="doc-id-badge">LEBE20713-01 · 29 pages · ©2024</div>
+            <h4>🔧 Controller Hardware Manual</h4>
+            <p class="summary-lead">Defines the physical hardware platform shared by both the ECS 100 and ECS 200 product lines. The controller is a single-board module whose functionality is determined entirely by the loaded application software. This manual focuses exclusively on the electrical and mechanical specifications — software behaviour is covered in separate documents.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Physical Specifications</h5>
+                <table class="spec-table">
+                  <tr><td>Dimensions</td><td>286 × 200 × 51 mm (81 mm with tallest connector)</td></tr>
+                  <tr><td>Operating Temp</td><td>–40 °C to +70 °C</td></tr>
+                  <tr><td>Max Surrounding</td><td>50 °C</td></tr>
+                  <tr><td>Ingress Protection</td><td>IP20 (packaged controller)</td></tr>
+                </table>
+              </div>
+              <div class="detail-block">
+                <h5>Communication Interfaces</h5>
+                <ul>
+                  <li>4 × 4-wire Ethernet ports (10/100 Mbps)</li>
+                  <li>2 × 2-wire Ethernet ports (SPE / 10BASE-T1L)</li>
+                  <li>1 × Primary CAN bus port</li>
+                  <li>1 × Accessory CAN bus port</li>
+                  <li>1 × RS-485 serial port</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Signal Inputs</h5>
+                <ul>
+                  <li>12 × Discrete digital inputs</li>
+                  <li>1 × Isolated digital input</li>
+                  <li>3 × Analog inputs (resistive or voltage mode, shared 5V supply)</li>
+                  <li>1 × MPU (Magnetic Pick-Up) speed sensing input</li>
+                  <li>2 × 3-phase AC voltage sensing inputs (generator + bus/utility)</li>
+                  <li>1 × 3-phase AC current sensing input (via CTs)</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Signal Outputs</h5>
+                <ul>
+                  <li>12 × Sinking digital outputs</li>
+                  <li>2 × Analog outputs (voltage or current mode)</li>
+                  <li>3 × PWM outputs</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">The manual covers mounting/installation procedures with DIN rail and panel-mount options, grounding requirements, wire gauge recommendations (14–20 AWG depending on signal type, shielded twisted pair for communications), power supply requirements, LED indicator meanings (power/firmware status, CAN 1/2 communication), AC metering accuracy specifications, and the programming/firmware update interface.</p>
+
+            <div class="section-preview">
+              <h5>Sections in This Document</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§1</span> Introduction &amp; Scope</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§2</span> Safety &amp; ESD</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§3</span> Basics (Physical, Env, Wiring, Power)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§4</span> Communications (CAN, RS-485, Ethernet)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§5</span> Inputs (DI, AI, MPU)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§6</span> Outputs (DO, AO, PWM)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§7</span> AC Sensing (V &amp; I)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§8</span> Programming Interface</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">4-Wire Ethernet</span>
+              <span class="topic-tag">2-Wire Ethernet</span>
+              <span class="topic-tag">CAN Bus</span>
+              <span class="topic-tag">RS-485</span>
+              <span class="topic-tag">Digital I/O</span>
+              <span class="topic-tag">Analog I/O</span>
+              <span class="topic-tag">PWM</span>
+              <span class="topic-tag">AC Sensing</span>
+              <span class="topic-tag">CT Input</span>
+              <span class="topic-tag">MPU</span>
+              <span class="topic-tag">IP20</span>
+              <span class="topic-tag">DIN Rail Mount</span>
+              <span class="topic-tag">LED Status</span>
+              <span class="topic-tag">ESD</span>
+            </div>
+          </div>
+
+          <!-- ==================== HMI ==================== -->
+          <div class="doc-overview-card" onclick="showView('hmi')">
+            <div class="doc-id-badge">LEBE20715-02 · 280 pages · ©2025</div>
+            <h4>🖥️ HMI Manual – Paralleling Genset Control</h4>
+            <p class="summary-lead">Complete operator interface documentation for the ECS 200 touchscreen HMI used in paralleling generator set applications. The HMI connects to the controller over Ethernet and provides real-time system visualization, parameter configuration, event management, and security-controlled access to all operational and service-level functions.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Physical &amp; Installation</h5>
+                <ul>
+                  <li>Panel-mount touchscreen with specified panel cutout dimensions</li>
+                  <li>Power requirements and mechanical specifications</li>
+                  <li>Operating temperature range for display and backlight</li>
+                  <li>Ethernet communication wiring guidelines</li>
+                  <li>HMI software flashing / update procedure</li>
+                  <li>Cleaning guidelines for touchscreen surface</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Navigation &amp; User Interface</h5>
+                <ul>
+                  <li><strong>Menu Button</strong> – Main menu with two levels of submenus</li>
+                  <li><strong>Home Button</strong> – Return to system overview</li>
+                  <li><strong>Events Button</strong> – Active alarms &amp; event history</li>
+                  <li><strong>Alarm Acknowledgement</strong> – Acknowledge active alarms</li>
+                  <li><strong>Lock/Unlock</strong> – Screen lock with timeout</li>
+                  <li><strong>ECS Button</strong> – Engine Control Switch (Off/Manual/Auto)</li>
+                  <li>Wayfinding text, annunciator strip, context buttons</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>System Parameter Screens</h5>
+                <ul>
+                  <li><strong>System Overview</strong> – Multi-unit plant view with utility, bus bars, breaker status, real power</li>
+                  <li><strong>Paralleling</strong> – Dead Bus Arbitration, Sync Overview, Load Share, Load Sense Load Demand (LSLD)</li>
+                  <li><strong>Genset / Engine / AC</strong> – Per-unit status, oil pressure, coolant temp, voltage, current, frequency, power</li>
+                  <li><strong>I/O Overview</strong> – Digital inputs/outputs, analog I/O, PWM, remote DI/DO/AI/AO/RTD, custom maps</li>
+                  <li><strong>Voltage Regulator</strong> – IVR status and settings</li>
+                  <li><strong>Network Status</strong> – Module communication health</li>
+                  <li><strong>kW Load Histogram</strong> – Historical load distribution</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Control &amp; Configuration</h5>
+                <ul>
+                  <li><strong>Control Features</strong> – Paralleling, idle/rated, load shed, fuel transfer, AMF, cycle timer, gas blending</li>
+                  <li><strong>Annunciator</strong> – LED bar, alarm outputs, icon bar, custom events, lamp test</li>
+                  <li><strong>Custom Screens</strong> – User-designed HMI screens</li>
+                  <li><strong>Configurable Parameters</strong> – DBA, load share, generator ratings, voltage reg, Ethernet, SCADA, engine management</li>
+                  <li><strong>Security</strong> – Multi-level password management (user/service levels), enter/change/edit password workflows</li>
+                  <li><strong>Remote HMI</strong> – Remote display capability, flash file, remote password management</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Additional topics include loss of communication behaviour (how the HMI recovers when controller connection drops), remote sensing for utility monitoring, hardware block diagrams showing system interconnections, and HMI file manager for managing configuration files and on-screen PDF manuals. The manual also covers display pairing for genset remote display scenarios and Ethernet remote display setup using an ET-connected laptop.</p>
+
+            <div class="section-preview">
+              <h5>Major Sections (18 total)</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§1–2</span> General Info &amp; Safety</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§3</span> Installation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§4</span> User Orientation &amp; Navigation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§5</span> System Parameter Screens</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§6</span> HMI Events &amp; Logs</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§7</span> Control Feature Parameters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§8</span> Annunciator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§9</span> Custom Screens</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§10</span> Configurable Parameters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§11</span> Preferences &amp; Setup</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§12–13</span> Device Info &amp; File Manager</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§14–18</span> Remote HMI, Sensing, HW Diagram</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (control logic behind HMI screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (controller connections)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (remote data access)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Touchscreen</span>
+              <span class="topic-tag">System Overview</span>
+              <span class="topic-tag">Dead Bus Arbitration</span>
+              <span class="topic-tag">Synchronization</span>
+              <span class="topic-tag">Load Share</span>
+              <span class="topic-tag">LSLD</span>
+              <span class="topic-tag">Event Logs</span>
+              <span class="topic-tag">Annunciator</span>
+              <span class="topic-tag">Custom Screens</span>
+              <span class="topic-tag">Password Security</span>
+              <span class="topic-tag">Remote Display</span>
+              <span class="topic-tag">AMF</span>
+              <span class="topic-tag">Fuel Transfer</span>
+              <span class="topic-tag">Voltage Regulator</span>
+              <span class="topic-tag">kW Histogram</span>
+            </div>
+          </div>
+
+          <!-- ==================== SOFTWARE ==================== -->
+          <div class="doc-overview-card" onclick="showView('sw')">
+            <div class="doc-id-badge">LEBE20716-02 · 420 pages · ©2025</div>
+            <h4>⚙️ Software Operations Manual – Paralleling Generator Set Control</h4>
+            <p class="summary-lead">The most comprehensive document in the suite (420 pages, 42 major sections), this manual defines the complete software behaviour of the ECS 200 when configured as a paralleling generator set controller. It covers everything from initial electrical connections and basic parameter setup through advanced island/utility paralleling algorithms, integrated voltage regulation, PLC logic programming, and functional safety certification requirements.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Generator Set Configuration</h5>
+                <ul>
+                  <li><strong>Engine Sensors</strong> – Oil pressure, coolant temperature sensor mapping and threshold configuration</li>
+                  <li><strong>Generator Ratings</strong> – Ratings groups, output voltage, frequency, and power settings</li>
+                  <li><strong>Engine Speed</strong> – Speed control, idle/rated speed settings, MPU configuration</li>
+                  <li><strong>Generator Protection</strong> – Overcurrent, voltage/current imbalance, over/under frequency, over/under voltage, reverse real power, reverse reactive power, over/under reactive power, open phase detection, pole slip detection, utility RoCoF</li>
+                  <li><strong>AC Sensing</strong> – Voltage and current measurement configuration and calibration</li>
+                  <li><strong>Setpoint Save/Restore</strong> – Configuration backup and restore procedures</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Start/Stop &amp; Engine Control</h5>
+                <ul>
+                  <li><strong>Automatic Control</strong> – Auto mode with remote start/stop via DI or SCADA</li>
+                  <li><strong>Cranking Control</strong> – Controller-controlled cranking sequences with attempt/rest timers</li>
+                  <li><strong>Fuel Priming</strong> – Pre-start fuel priming setpoints and timers</li>
+                  <li><strong>Starter Motor Protection</strong> – Over-crank protection and starter engage/disengage logic</li>
+                  <li><strong>Emergency Stop</strong> – E-stop input handling and shutdown sequences</li>
+                  <li><strong>Cooldown Timer</strong> – Configurable cooldown period before engine shutdown</li>
+                  <li><strong>Instant Auto</strong> – Fast transfer to auto mode for critical loads</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Event Handling &amp; I/O</h5>
+                <ul>
+                  <li><strong>Event Response Configs (ERCs)</strong> – Configurable per-input alarm/shutdown behaviour</li>
+                  <li><strong>Digital Inputs (12)</strong> – Programmable for commands, status, or system events via Cat ET</li>
+                  <li><strong>Analog Inputs (3)</strong> – Resistive or voltage mode with built-in and custom sensor maps</li>
+                  <li><strong>Digital Outputs (12)</strong> – Programmable for status parameters or system events</li>
+                  <li><strong>Analog Outputs (2)</strong> – Voltage or current mode output</li>
+                  <li><strong>PWM Outputs (3)</strong> – Duty cycle controlled outputs for fan/valve control</li>
+                  <li><strong>SCADA Alarm Bit Packing</strong> – Grouped alarm status for efficient remote monitoring</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Protection &amp; Safety</h5>
+                <ul>
+                  <li><strong>Overcurrent Protection</strong> – Definite time, IEC/IEEE inverse time curves, thermal damage curve</li>
+                  <li><strong>Arc Flash Limit</strong> – Maintenance mode with reduced trip thresholds</li>
+                  <li><strong>Generator Stator Current Limiter</strong> – Real-time stator current limiting</li>
+                  <li><strong>Breaker Control</strong> – Close/trip commands, breaker health monitoring</li>
+                  <li><strong>Functional Safety (§42)</strong> – IEC 61508 compliant functions: overvoltage, overcurrent, overspeed, E-stop, parity inputs, ECM/governor power removal, fuel gas shut-off, sync breaker control, setpoint calibration</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Island Paralleling (§40)</h5>
+                <ul>
+                  <li><strong>Failsafe Mode</strong> – Degraded operation when comms lost between units</li>
+                  <li><strong>Dead Bus Arbitration</strong> – First-on logic to energize a dead bus with configurable priority</li>
+                  <li><strong>Synchronization</strong> – Voltage, frequency, and phase angle matching with gain tuning procedures</li>
+                  <li><strong>Load Sharing</strong> – Real (kW) and reactive (kVAR) droop/isochronous sharing with tuning guide</li>
+                  <li><strong>LSLD</strong> – Automatic load sense/load demand with add/drop logic, N+X redundancy, spinning reserve, proactive add, sequence strategies, event-based redundancy</li>
+                  <li><strong>Bus/Intertie Protections</strong> – Inter-bus transfer and protection coordination</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Utility Paralleling &amp; Advanced Features</h5>
+                <ul>
+                  <li><strong>AMF Control (§21)</strong> – Automatic Mains Failure with utility-to-genset and genset-to-utility transfer, utility AC monitoring</li>
+                  <li><strong>Base Load / VAR / PF Control (§41)</strong> – kW export, reactive load, and power factor control in utility parallel mode</li>
+                  <li><strong>IVR (§36)</strong> – Integrated Voltage Regulator with PWM excitation, PID tuning, under-frequency roll-off, reactive droop compensation</li>
+                  <li><strong>TLR (§37)</strong> – Transient Load Relief with operation, setpoint config, and tuning procedures</li>
+                  <li><strong>PLC (§38)</strong> – Integrated PLC with logic blocks, function blocks, special blocks, debug, PVC file creation, TCP/IP download</li>
+                  <li><strong>Web Server (§39)</strong> – Built-in HTTP server for remote monitoring</li>
+                  <li><strong>Dynamic Gas Blending, Gas Train, Fuel Transfer, Driven Equipment Control</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="section-preview">
+              <h5>All 42 Major Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§1–2</span> General Info &amp; Safety</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§3</span> Initial Operation &amp; Orientation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§4–5</span> Setpoints &amp; AC Sensing</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§6</span> Start / Stop Control</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§7–8</span> Verification &amp; Event Handling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§9–10</span> Security &amp; Hours/Meters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§11–15</span> I/O: DI, AI, DO, AO, PWM</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§16–17</span> Overcurrent &amp; Breaker</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§18–20</span> Histogram, kW Relay, PCT</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§21–23</span> AMF, Load Shed, Battery</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§24–31</span> Cooling, Gas, Fuel, ESO</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§32–35</span> Ethernet, SCADA, CAN, Modules</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§36–37</span> IVR &amp; Transient Load Relief</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§38–39</span> PLC &amp; Web Server</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§40</span> Island Paralleling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§41</span> Utility Paralleling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§42</span> Functional Safety</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (operator screens for these features)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (I/O pinouts &amp; wiring)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('bop')">LEBE20720 – BOP Manual (ancillary plant controls)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (Modbus registers for these parameters)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Engine Sensors</span>
+              <span class="topic-tag">Generator Protection</span>
+              <span class="topic-tag">Overcurrent Curves</span>
+              <span class="topic-tag">Breaker Control</span>
+              <span class="topic-tag">ERCs</span>
+              <span class="topic-tag">Auto Mains Failure</span>
+              <span class="topic-tag">Dead Bus Arbitration</span>
+              <span class="topic-tag">Synchronization</span>
+              <span class="topic-tag">Load Share</span>
+              <span class="topic-tag">LSLD</span>
+              <span class="topic-tag">IVR</span>
+              <span class="topic-tag">PLC</span>
+              <span class="topic-tag">TLR</span>
+              <span class="topic-tag">Functional Safety</span>
+              <span class="topic-tag">Gas Train</span>
+              <span class="topic-tag">Web Server</span>
+            </div>
+          </div>
+
+          <!-- ==================== BOP ==================== -->
+          <div class="doc-overview-card" onclick="showView('bop')">
+            <div class="doc-id-badge">LEBE20720-00 · 159 pages · ©2025</div>
+            <h4>🏭 Balance of Plant (BOP) Software Operations Manual</h4>
+            <p class="summary-lead">Covers the auxiliary plant control features that extend the ECS 200 beyond core genset control into Combined Heat and Power (CHP) and containerized power plant applications. The BOP software manages thermal circuits — cooling water, aftercooler, customer heating, exhaust heat recovery — as well as enclosure ventilation and safety systems. Each feature section follows a consistent structure: functional description, control logic flow diagrams, setpoints, diagnostics/status events, I/O mapping, and HMI display requirements.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Cooling Circuit Controls</h5>
+                <ul>
+                  <li><strong>SCAC 3-Way Valve &amp; Pump (§5)</strong> – Separate Circuit Aftercooler with PID-controlled 3-way mixing valve, end position sensors, pump follow-up delay timer, immediate stop logic</li>
+                  <li><strong>SCAC Radiator (§6)</strong> – Aftercooler radiator with VFD (variable frequency drive) or staged single-speed fan switching, temperature setpoint calculation</li>
+                  <li><strong>Engine Cooling Valve &amp; Pump (§7)</strong> – Jacket water 3-way valve control with pump management</li>
+                  <li><strong>Engine Cooling Radiator (§8)</strong> – Engine circuit radiator with VFD or staged fan, PID control, temperature setpoint logic</li>
+                  <li><strong>Dual Core Radiator (§9)</strong> – Combined SCAC + JW radiator control for power-only mode with VFD or stage switching, control deviation calculation</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Heat Recovery &amp; CHP</h5>
+                <ul>
+                  <li><strong>Customer Site Heating (§10)</strong> – Heating circuit with cooling water heat exchanger, 3-way valve (can be installed in heating circuit or engine cooling circuit), pump control</li>
+                  <li><strong>Exhaust Heat Exchanger Bypass (§11)</strong> – EHE bypass control for customer heating with exhaust gas valve management, multiple operational scenarios with flow diagrams</li>
+                  <li><strong>Exhaust Gas Temp Sensors (§14)</strong> – Additional exhaust temperature I/O for CHP monitoring, trip setpoint calculations, and auxiliary temperature sensor configuration</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Ventilation &amp; Safety</h5>
+                <ul>
+                  <li><strong>Enclosure Ventilation (§12)</strong> – Container/enclosure ventilation with and without circulating air, ventilation fan control, inlet/outlet louver control, standby ventilation mode</li>
+                  <li><strong>Smoke/Fire Alarm (§13)</strong> – Fire alarm reaction (ventilation shutdown), gas alarm reaction (full ventilation), prioritization logic between fire and gas alarm scenarios</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>BOP I/O &amp; Integration</h5>
+                <ul>
+                  <li><strong>BOP Ethernet I/O Module (§15)</strong> – Remote I/O module configuration for BOP signals</li>
+                  <li><strong>Config Code: CHP &amp; Container</strong> – I/O mapping for CHP + container applications</li>
+                  <li><strong>Config Code: JW &amp; SCAC</strong> – I/O mapping for jacket water + aftercooler</li>
+                  <li><strong>Config Code: Combined</strong> – Full JW, SCAC, CHP, and container I/O mapping</li>
+                  <li>HMI display requirements for all BOP DI/DO/AI/AO points</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Every BOP feature includes comprehensive control setpoint tables (enable/disable, temperature thresholds, PID gains, timers, hysteresis), diagnostic event definitions (sensor failures, actuator faults, communication errors), status events, data feedback parameters for monitoring, complete I/O allocation tables, and HMI screen layouts showing overview and configuration screens with parameter labels and value formats.</p>
+
+            <div class="section-preview">
+              <h5>All 15 Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§1–4</span> General, Safety, Glossary, Overview</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§5</span> SCAC Valve &amp; Pump</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§6</span> SCAC Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§7</span> Engine Cooling Valve/Pump</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§8</span> Engine Cooling Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§9</span> Dual Core Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§10</span> Customer Site Heating</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§11</span> Exhaust HE Bypass</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§12</span> Enclosure Ventilation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§13</span> Smoke/Fire Alarm</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§14</span> Exhaust &amp; Aux Temp Sensors</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§15</span> BOP Ethernet I/O Module</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (core genset control)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (BOP display screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (BOP Modbus registers)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (I/O wiring)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">SCAC</span>
+              <span class="topic-tag">3-Way Valve</span>
+              <span class="topic-tag">PID Control</span>
+              <span class="topic-tag">VFD Radiator</span>
+              <span class="topic-tag">Staged Fan</span>
+              <span class="topic-tag">Jacket Water</span>
+              <span class="topic-tag">CHP Heating</span>
+              <span class="topic-tag">Heat Exchanger</span>
+              <span class="topic-tag">Exhaust Bypass</span>
+              <span class="topic-tag">Ventilation</span>
+              <span class="topic-tag">Louver Control</span>
+              <span class="topic-tag">Fire Alarm</span>
+              <span class="topic-tag">Gas Alarm</span>
+              <span class="topic-tag">BOP I/O Module</span>
+              <span class="topic-tag">Dual Core Radiator</span>
+            </div>
+          </div>
+
+          <!-- ==================== SCADA ==================== -->
+          <div class="doc-overview-card" onclick="showView('scada')">
+            <div class="doc-id-badge">LEBE23522-00 · 91 pages · ©2025</div>
+            <h4>📡 Cat ECS SCADA Modbus Software Manual</h4>
+            <p class="summary-lead">Defines the complete Modbus TCP/IP SCADA interface for remote supervisory control and data acquisition from ECS 100 and ECS 200 controllers. This is the integration guide for connecting the Cat ECS to building management systems (BMS), plant SCADA systems, and third-party monitoring platforms. All data is accessed via standard Modbus TCP/IP (port 502) with password-protected read/write access.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Connection &amp; Security Setup</h5>
+                <ul>
+                  <li><strong>IP Configuration</strong> – Set via Cat Electronic Technician (ET) service tool</li>
+                  <li><strong>Data Link Enabling</strong> – Enable SCADA access with password via Cat ET or HMI display</li>
+                  <li><strong>HMI Configuration</strong> – SCADA settings accessible through HMI configuration screens</li>
+                  <li><strong>Password Security</strong> – Password-protected write access, password length and complexity rules, lockout behaviour</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Data Interpretation &amp; Scaling</h5>
+                <ul>
+                  <li><strong>1-Word Unsigned Integer</strong> – Read/write for simple numerical values with scaling factors</li>
+                  <li><strong>2-Word Unsigned Integer</strong> – Read/write for large values (energy meters, hours) spanning two registers</li>
+                  <li><strong>Byte Extracting</strong> – Unpacking multiple status values from a single register</li>
+                  <li><strong>Byte Packing</strong> – Combining multiple command values into a single write register</li>
+                  <li><strong>State/Status/Command</strong> – Enumerated state values, status bit flags, command codes</li>
+                  <li><strong>Complex Data</strong> – Multi-register structured data for event logs and timestamped records</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Genset &amp; Engine Register Maps</h5>
+                <ul>
+                  <li><strong>Genset Ratings</strong> – Active group, rated voltage, current, power, frequency</li>
+                  <li><strong>Genset AC</strong> – Phase voltages, currents, frequency, power factor</li>
+                  <li><strong>Genset Power/Energy</strong> – Real (kW), reactive (kVAR), apparent (kVA), kWh, kVARh</li>
+                  <li><strong>State/Mode/Status</strong> – Operating mode, run status, fault codes</li>
+                  <li><strong>Start/Stop Commands</strong> – Remote start, stop, reset, mode select</li>
+                  <li><strong>Load Share / LSLD</strong> – Load demand status, kW setpoint, add/drop commands</li>
+                  <li><strong>Paralleling Data</strong> – Gen #1 through Gen #32 paralleling status registers</li>
+                  <li><strong>Engine Data</strong> – Service meter, speed, fuel rate, oil pressure/temp, coolant temp, exhaust temps, intake, turbocharger, filter differential, aftertreatment (DEF level, DPF soot, SCR temp), gas data, dynamic gas blending</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Events, Network &amp; Special Registers</h5>
+                <ul>
+                  <li><strong>Acknowledge/Reset</strong> – Remote event acknowledgement and alarm reset commands</li>
+                  <li><strong>Alarm Bit Packing</strong> – Hard shutdown, soft shutdown, lamp, horn, display events packed into user-configurable alarm groups</li>
+                  <li><strong>Annunciator</strong> – Remote annunciator status registers</li>
+                  <li><strong>Event Logs</strong> – Active event count, system event log (genset + engine), status event log with timestamps</li>
+                  <li><strong>Network Status</strong> – Communication health for all connected modules</li>
+                  <li><strong>Module Information</strong> – Firmware versions, serial numbers, hardware IDs</li>
+                  <li><strong>Grid Code (§10)</strong> – Grid code compliance registers (frequency/voltage ride-through, power ramp rates)</li>
+                  <li><strong>Balance of Plant (§11)</strong> – BOP-specific registers for CHP thermal management</li>
+                  <li><strong>Programmable Cycle Timer &amp; Real-Time Clock</strong> – Timer status and RTC read/write</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Section 12 provides practical worked examples showing how to read and write Modbus registers including proper scaling, byte ordering, and multi-register reads. The genset paralleling data section supports up to 32 generator units in a single plant, each with its own register block for remote monitoring of the entire paralleling system.</p>
+
+            <div class="section-preview">
+              <h5>All 12 Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§1–3</span> General Info, Safety, Glossary</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§4</span> SCADA Modbus Overview</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§5</span> Data Link Setup &amp; Config</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§6</span> Data Interpretation &amp; Scaling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§7</span> Modbus Register Maps</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§8</span> Events &amp; Alarms</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§9</span> Network &amp; Module</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§10</span> Grid Code</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§11</span> Balance of Plant</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§12</span> Worked Examples</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (parameter definitions behind registers)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (SCADA config screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('bop')">LEBE20720 – BOP Manual (BOP register definitions)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (Ethernet port specs)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Modbus TCP/IP</span>
+              <span class="topic-tag">Port 502</span>
+              <span class="topic-tag">Register Map</span>
+              <span class="topic-tag">Data Scaling</span>
+              <span class="topic-tag">Byte Packing</span>
+              <span class="topic-tag">Genset Registers</span>
+              <span class="topic-tag">Engine Data</span>
+              <span class="topic-tag">Paralleling (32 units)</span>
+              <span class="topic-tag">Alarm Bit Packing</span>
+              <span class="topic-tag">Event Logs</span>
+              <span class="topic-tag">Grid Code</span>
+              <span class="topic-tag">BOP Registers</span>
+              <span class="topic-tag">Cat ET</span>
+              <span class="topic-tag">Real-Time Clock</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HARDWARE VIEW -->
+      <div class="doc-detail" id="view-hw">
+        <div class="doc-header-card">
+          <div class="doc-title">Controller Hardware Manual</div>
+          <div class="doc-number">LEBE20713-01 · Cat® ECS 100 / ECS 200</div>
+          <div class="doc-summary">Provides hardware component details for the Cat® Energy Control System controller. The controller is a single piece of hardware used across multiple applications. Each application uses specific software and additional components (touch screens, expansion modules, CDVRs) to form a complete control system. The controller features a wide range of signal interfaces for communications, digital/analog I/O, AC sensing, and power management.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 29 pages</span>
+            <span class="meta-badge">©️ 2024 Caterpillar</span>
+            <span class="meta-badge">🌡️ –40°C to 70°C</span>
+            <span class="meta-badge">📦 IP20 Rated</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-hw"></div>
+      </div>
+
+      <!-- HMI VIEW -->
+      <div class="doc-detail" id="view-hmi">
+        <div class="doc-header-card">
+          <div class="doc-title">HMI Manual – Paralleling Genset Control</div>
+          <div class="doc-number">LEBE20715-02 · Cat® ECS 200</div>
+          <div class="doc-summary">Comprehensive manual for the Human Machine Interface (HMI) used with the ECS 200 paralleling genset controller. Covers physical installation, touchscreen navigation and menu system, system parameter viewing, control feature configuration, event management, annunciator setup, custom screen creation, configurable parameters, security management, remote HMI access, and hardware block diagrams.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 280 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">🖥️ Touchscreen</span>
+            <span class="meta-badge">🔒 Multi-level Security</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-hmi"></div>
+      </div>
+
+      <!-- SOFTWARE VIEW -->
+      <div class="doc-detail" id="view-sw">
+        <div class="doc-header-card">
+          <div class="doc-title">Software Operations Manual – Paralleling Generator Set Control</div>
+          <div class="doc-number">LEBE20716-02 · Cat® ECS 200</div>
+          <div class="doc-summary">The primary software manual for the ECS 200 paralleling genset controller. Covers initial setup and user orientation, generator set parameter configuration, AC sensing, start/stop control, event handling, I/O programming, overcurrent and generator protection, breaker control, Auto Mains Failure (AMF), load management, integrated voltage regulator (IVR), transient load relief (TLR), PLC programming, web server, island and utility paralleling functions, and functional safety requirements.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 420 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">⚡ 42 Major Sections</span>
+            <span class="meta-badge">🔐 Functional Safety</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-sw"></div>
+      </div>
+
+      <!-- BOP VIEW -->
+      <div class="doc-detail" id="view-bop">
+        <div class="doc-header-card">
+          <div class="doc-title">Balance of Plant Software Operations Manual</div>
+          <div class="doc-number">LEBE20720-00 · Cat® ECS 200</div>
+          <div class="doc-summary">Covers the Balance of Plant (BOP) control software for CHP (Combined Heat and Power) and containerized genset applications. Includes cooling circuit control (SCAC, engine cooling, dual core radiators), customer site heating, exhaust heat exchanger management, genset enclosure ventilation, fire/gas safety alarms, exhaust temperature monitoring, and BOP-specific I/O module configuration. Each feature includes functional descriptions, control setpoints, diagnostics, HMI display concepts, and I/O mapping.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 159 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">🏭 CHP & Container</span>
+            <span class="meta-badge">🌡️ Thermal Control</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-bop"></div>
+      </div>
+
+      <!-- SCADA VIEW -->
+      <div class="doc-detail" id="view-scada">
+        <div class="doc-header-card">
+          <div class="doc-title">Cat ECS SCADA Modbus Software Manual</div>
+          <div class="doc-number">LEBE23522-00 · Cat® ECS 100 / ECS 200</div>
+          <div class="doc-summary">Defines the SCADA (Supervisory Control and Data Acquisition) Modbus TCP/IP communication interface for the Cat ECS controllers. Covers the complete setup procedure, data interpretation rules (numerical scaling, state/status/command encoding, byte packing), detailed Modbus register maps for genset parameters, engine data, I/O, events/alarms, network status, grid code compliance data, and Balance of Plant registers.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 91 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">📡 Modbus TCP/IP</span>
+            <span class="meta-badge">📋 Register Maps</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-scada"></div>
+      </div>
+
+    </div>
+  </main>
+
+<script>
+// Document data
+const docs = {
+  hw: {
+    title: "Controller Hardware Manual",
+    file: "LEBE20713-01 ECS Hardware Manual.pdf",
+    id: "LEBE20713-01",
+    pages: 29,
+    sections: [
+      { num: "1", title: "Introduction and Scope", page: 4, desc: "Purpose and scope of the hardware manual. Lists related documentation including application-specific software manuals, touch screens, expansion modules, CDVR, MODBUS, SCADA, and wiring diagrams.", subs: [] },
+      { num: "2", title: "Safety", page: 5, desc: "Electrical safety warnings for generator set operation and Electrostatic Discharge (ESD) awareness. Covers handling precautions, ESD-protective workstations, and anti-static procedures.", subs: [
+        { title: "Electrical Safety", page: 5 },
+        { title: "Electrostatic Discharge Awareness", page: 5 }
+      ]},
+      { num: "3", title: "Basics", page: 6, desc: "Core hardware specifications including module overview, physical dimensions (286×200×51mm), environmental ratings (–40°C to 70°C, IP20), interface connectors, mounting/installation, grounding, wiring requirements, and power requirements.", subs: [
+        { title: "Module Overview", page: 6 },
+        { title: "Physical Specifications", page: 6 },
+        { title: "Environmental", page: 6 },
+        { title: "Dimensions", page: 6 },
+        { title: "Interface / Connectors", page: 7 },
+        { title: "Mounting / Installation", page: 8 },
+        { title: "Grounding", page: 10 },
+        { title: "Wiring Requirements", page: 10 },
+        { title: "Power Requirements / Specifications", page: 12 }
+      ]},
+      { num: "4", title: "Communications", page: 14, desc: "Communication interfaces: CAN bus (Primary and Accessory), RS-485, 4-wire Ethernet (4 ports), and 2-wire Ethernet (2 ports) specifications.", subs: [
+        { title: "CAN", page: 14 },
+        { title: "RS-485", page: 14 },
+        { title: "4-Wire Ethernet", page: 14 },
+        { title: "2-Wire Ethernet", page: 15 }
+      ]},
+      { num: "5", title: "Inputs", page: 16, desc: "Input signal specifications: 12 discrete inputs, 1 isolated digital input, 3 analog inputs (resistive/voltage modes with 5V supply), and MPU sensing inputs.", subs: [
+        { title: "Discrete Inputs", page: 16 },
+        { title: "Isolated Digital Input", page: 16 },
+        { title: "Analog Inputs", page: 16 },
+        { title: "MPU Sensing Inputs", page: 19 }
+      ]},
+      { num: "6", title: "Outputs", page: 20, desc: "Output signal specifications: 12 sinking digital outputs, 2 analog outputs (voltage/current modes), and 3 PWM outputs.", subs: [
+        { title: "Discrete Outputs", page: 20 },
+        { title: "Analog Outputs", page: 20 },
+        { title: "PWM Outputs", page: 21 }
+      ]},
+      { num: "7", title: "AC Sensing", page: 22, desc: "AC metering accuracy specifications, voltage sensing inputs (two 3-phase connections), and current sensing input (one 3-phase via CTs).", subs: [
+        { title: "AC Metering Accuracy", page: 22 },
+        { title: "Voltage Sensing", page: 22 },
+        { title: "Current Sensing", page: 23 }
+      ]},
+      { num: "8", title: "Programming", page: 24, desc: "Controller programming interface and firmware update procedures.", subs: [] }
+    ]
+  },
+  hmi: {
+    title: "HMI Manual – Paralleling Genset Control",
+    file: "LEBE20715-02 ECS200 HMI Manual.pdf",
+    id: "LEBE20715-02",
+    pages: 280,
+    sections: [
+      { num: "1", title: "General Information", page: 8, desc: "Introduction, application scope, and reference documents for the ECS 200 HMI system.", subs: [
+        { title: "Introduction", page: 8 },
+        { title: "Application", page: 8 },
+        { title: "References", page: 8 }
+      ]},
+      { num: "2", title: "Safety", page: 9, desc: "Electrical safety and electrostatic discharge awareness for HMI installation and handling.", subs: [] },
+      { num: "3", title: "Installation", page: 10, desc: "Physical installation requirements including mounting location, panel cutout dimensions, power requirements, mechanical specifications, operating temperature range, electrical connections, communication wiring, cleaning guidelines, and HMI software flashing.", subs: [
+        { title: "Mounting Location", page: 10 },
+        { title: "Dimensions", page: 10 },
+        { title: "Power Requirements", page: 12 },
+        { title: "Mechanical Specification", page: 12 },
+        { title: "Operating Temperature Range", page: 13 },
+        { title: "Electrical Connections", page: 13 },
+        { title: "Communication Wiring", page: 15 },
+        { title: "Flashing of HMI Software", page: 16 }
+      ]},
+      { num: "4", title: "Initial Operation & User Orientation", page: 17, desc: "Complete touchscreen navigation guide: Menu button (main menu, submenus), Home button, Events button, Alarm acknowledgement, Lock/Unlock button, Engine Control Switch (ECS) button, wayfinding text, annunciator strip, and context buttons.", subs: [
+        { title: "Menu Button & Submenus", page: 18 },
+        { title: "Home Button", page: 20 },
+        { title: "Events Button", page: 21 },
+        { title: "Alarm Acknowledgement", page: 22 },
+        { title: "Lock / Unlock Button", page: 22 },
+        { title: "ECS (Engine Control Switch) Button", page: 24 },
+        { title: "Wayfinding & Annunciator Strip", page: 27 }
+      ]},
+      { num: "5", title: "Viewing System Parameters", page: 28, desc: "All system parameter display screens: System Overview, Utility Overview, Unit Overview, Paralleling (Dead Bus Arbitration, Sync, Load Share, Load Sense Load Demand), Genset Overview, Engine Overview, AC Overview, I/O Overviews (Digital/Analog/PWM/Remote), Voltage Regulator, Network Status, and kW Load Histogram.", subs: [
+        { title: "System Overview", page: 28 },
+        { title: "Paralleling (Sync, Load Share, LSLD)", page: 35 },
+        { title: "Genset Overview", page: 48 },
+        { title: "Engine Overview", page: 50 },
+        { title: "AC Overview", page: 53 },
+        { title: "I/O Overview (DI/DO/AI/AO/PWM/Remote)", page: 55 },
+        { title: "Voltage Regulator Overview", page: 93 },
+        { title: "Network Status Overview", page: 97 },
+        { title: "kW Load Histogram", page: 99 }
+      ]},
+      { num: "6", title: "HMI Events", page: 101, desc: "Event navigation, event log types (genset control events, status events, ESO log), and event acknowledgement procedures.", subs: [
+        { title: "Navigation", page: 101 },
+        { title: "Types of Event Log", page: 102 },
+        { title: "Acknowledgement", page: 109 }
+      ]},
+      { num: "7", title: "Control Feature Parameters", page: 111, desc: "HMI interfaces for configuring paralleling (load share, LSLD, power system unit control), idle/rated control, load shed reset, fuel transfer, inducement override, automatic mains failure, programmable cycle timer, engine fuel priming, and dynamic gas blending.", subs: [
+        { title: "Paralleling", page: 112 },
+        { title: "Idle / Rated Control", page: 118 },
+        { title: "Load Shed Reset", page: 119 },
+        { title: "Fuel Transfer", page: 121 },
+        { title: "Automatic Mains Failure", page: 125 },
+        { title: "Programmable Cycle Timer", page: 127 },
+        { title: "Dynamic Gas Blending", page: 133 }
+      ]},
+      { num: "8", title: "On Screen Digital Annunciator", page: 135, desc: "Global LED bar indicators, alarm output driver behaviour, high side driver outputs, annunciator icon bar, annunciator menu selection, and lamp test feature.", subs: [] },
+      { num: "9", title: "Creating Custom Screens", page: 146, desc: "Procedures for designing and deploying custom HMI display screens.", subs: [] },
+      { num: "10", title: "Configurable Parameters", page: 155, desc: "Comprehensive parameter configuration: paralleling (DBA, load share, LSLD, PSU), generator ratings, load control, voltage regulator, counters, hours, real-time clock, AMF, fuel transfer, annunciator events, kW relay, transient load relief, PLC logic, Ethernet, remote display, SCADA settings, display pairing, and engine management.", subs: [
+        { title: "Paralleling (DBA, Load Share, LSLD)", page: 157 },
+        { title: "Generator Ratings", page: 170 },
+        { title: "Load Control", page: 171 },
+        { title: "Voltage Regulator", page: 174 },
+        { title: "Automatic Mains Failure", page: 182 },
+        { title: "Annunciator Custom Events", page: 185 },
+        { title: "Ethernet & Remote Display", page: 194 },
+        { title: "SCADA Settings", page: 201 },
+        { title: "Engine Management", page: 208 }
+      ]},
+      { num: "11", title: "Preferences & Initial Setup", page: 210, desc: "Display preferences: language selection, display settings, screen saver, backlight saver, application settings, display information, security level, and password management (user level, enter password, change/edit password).", subs: [
+        { title: "Language", page: 210 },
+        { title: "Display Settings", page: 211 },
+        { title: "Screen Saver & Backlight Settings", page: 213 },
+        { title: "Security Level & Password Management", page: 222 }
+      ]},
+      { num: "12", title: "Device Information", page: 237, desc: "Controller and HMI device identification and version information display.", subs: [] },
+      { num: "13", title: "HMI File Manager", page: 239, desc: "Managing HMI configuration files and PDF manuals stored on the display.", subs: [] },
+      { num: "14", title: "Remote HMI Capability", page: 251, desc: "Remote HMI access functionality, flash file management, and remote password management.", subs: [] },
+      { num: "15", title: "Loss of Communication", page: 253, desc: "Behavior and recovery procedures when communication between HMI and controller is lost.", subs: [] },
+      { num: "16", title: "Remote Sensing", page: 257, desc: "Remote sensing feature for utility monitoring including utility overview screens and genset paralleling control events when remote sensing is enabled.", subs: [] },
+      { num: "17", title: "Hardware Block Diagram", page: 262, desc: "System-level hardware interconnection diagrams for the HMI and controller.", subs: [] },
+      { num: "18", title: "Marketing", page: 265, desc: "Customer experience, performance highlights, and feature summaries for the ECS 200 HMI.", subs: [] }
+    ]
+  },
+  sw: {
+    title: "Software Operations Manual – Paralleling Genset Control",
+    file: "LEBE20716-02 ECS200 Software Manual.pdf",
+    id: "LEBE20716-02",
+    pages: 420,
+    sections: [
+      { num: "1", title: "General Information", page: 9, desc: "Introduction, application scope, and references for the ECS 200 paralleling genset software.", subs: [] },
+      { num: "2", title: "Safety", page: 10, desc: "Electrical safety and ESD awareness.", subs: [] },
+      { num: "3", title: "Initial Operation & User Orientation", page: 11, desc: "Electrical connections/diagrams, LED indicators, configuring setpoints, adjusting preferences, and basic generator set parameters: engine sensors, oil pressure, coolant temperature, generator ratings/groups, output voltage, engine speed, idle/rated speed, and generator protection (overcurrent, voltage/current imbalance, over/under frequency and voltage, reverse power, reactive power, open phase, pole slip, RoCoF).", subs: [
+        { title: "Electrical Connections / Diagrams", page: 11 },
+        { title: "LED Indicators", page: 12 },
+        { title: "Engine Oil Pressure", page: 14 },
+        { title: "Engine Coolant Temperature", page: 17 },
+        { title: "Generator Ratings and Ratings Groups", page: 21 },
+        { title: "Generator Output Voltage", page: 25 },
+        { title: "Engine Speed", page: 27 },
+        { title: "Generator Protection (OC, Imbalance, Freq, Voltage, Reverse Power)", page: 35 }
+      ]},
+      { num: "4", title: "Saving & Restoring Setpoints", page: 67, desc: "Procedures for saving and restoring controller setpoint configurations.", subs: [] },
+      { num: "5", title: "AC Sensing", page: 68, desc: "AC voltage and current sensing configuration, measurement modes, and accuracy details.", subs: [] },
+      { num: "6", title: "Starting & Stopping the Generator Set", page: 72, desc: "Automatic control modes, controller-controlled cranking, start/stop sequences, fuel priming, inverted start signal, starter motor protection, emergency stop, cooldown timer, and instant auto feature.", subs: [
+        { title: "Automatic Control", page: 74 },
+        { title: "Controller Controlled Cranking", page: 77 },
+        { title: "Starting the Generator Set", page: 78 },
+        { title: "Stopping the Generator Set", page: 83 },
+        { title: "Emergency Stop", page: 85 },
+        { title: "Cooldown", page: 86 },
+        { title: "Instant Auto", page: 87 }
+      ]},
+      { num: "7", title: "Engine Setpoint Verification", page: 89, desc: "Procedures for verifying overspeed, low oil pressure, and high coolant temperature setpoints.", subs: [] },
+      { num: "8", title: "Handling Events", page: 92, desc: "Event Response Configurations (ERCs) for analog and digital inputs, resetting events (via digital input, for ECMs without CAN 1), status events, and SCADA alarm bit packing.", subs: [
+        { title: "Event Response Configurations", page: 93 },
+        { title: "Changing an ERC (Analog & Digital)", page: 95 },
+        { title: "Resetting Events", page: 97 },
+        { title: "SCADA Alarm Bit Packing", page: 98 }
+      ]},
+      { num: "9", title: "Security", page: 102, desc: "Security settings and access control for the controller.", subs: [] },
+      { num: "10", title: "Engine Hours, Maintenance & Meters", page: 104, desc: "Engine operating hours, service maintenance interval configuration, kWh and kVARh meters (lifetime and trip totals).", subs: [] },
+      { num: "11", title: "Digital Inputs", page: 108, desc: "Programming digital inputs via Cat Service Tool for command/status parameters and system events. Includes digital input ERCs.", subs: [] },
+      { num: "12", title: "Analog Inputs", page: 122, desc: "Analog input programming (resistive/voltage modes), ERCs, built-in and custom sensor maps, warnings/shutdowns, and handling unsupported sensor ranges.", subs: [] },
+      { num: "13", title: "Digital Outputs", page: 143, desc: "Programming digital outputs for status parameters and system events via Cat Service Tool.", subs: [] },
+      { num: "14", title: "Analog Outputs", page: 158, desc: "Configuring analog outputs for voltage and current modes.", subs: [] },
+      { num: "15", title: "PWM Outputs", page: 162, desc: "PWM output programming and disabling via Cat Service Tool.", subs: [] },
+      { num: "16", title: "Overcurrent Protection", page: 164, desc: "Protection curve types: definite time, inverse time (IEC/IEEE), thermal damage curve, arc flash limit (maintenance mode), generator stator current limiter, and overcurrent setpoints.", subs: [
+        { title: "Definite Time Curve", page: 164 },
+        { title: "Inverse Time Curves", page: 165 },
+        { title: "Thermal Damage Curve", page: 166 },
+        { title: "Arc Flash Limit (Maintenance Mode)", page: 167 },
+        { title: "Overcurrent Protection Setpoints", page: 168 }
+      ]},
+      { num: "17", title: "Breaker Control", page: 174, desc: "Generator breaker control configuration and operation.", subs: [] },
+      { num: "18", title: "kW Load Histogram", page: 178, desc: "Viewing and clearing the generator kW load histogram data.", subs: [] },
+      { num: "19", title: "Programmable kW Relay Function", page: 182, desc: "Configuring programmable kW relays for overload and load shed functions.", subs: [] },
+      { num: "20", title: "Programmable Cycle Timer (PCT)", page: 185, desc: "Weekly timer configuration and programmable cycle timer setup via Cat Service Tool.", subs: [] },
+      { num: "21", title: "Auto Mains Failure (AMF) Control", page: 188, desc: "AMF control in automatic and manual modes, utility-to-genset and genset-to-utility transfer processes, display interface, and setpoints (general, utility frequency, utility voltage, utility AC monitor).", subs: [
+        { title: "AMF Automatic Mode", page: 191 },
+        { title: "AMF Manual Mode", page: 192 },
+        { title: "Utility/Mains Transfer Process", page: 193 },
+        { title: "AMF Setpoints", page: 195 }
+      ]},
+      { num: "22", title: "Load Shed", page: 208, desc: "Basic load shed operation and parameter configuration.", subs: [] },
+      { num: "23", title: "Battery Monitoring", page: 209, desc: "Battery voltage monitoring and alarm configuration.", subs: [] },
+      { num: "24", title: "Engine Cooling Fan Control", page: 212, desc: "Cooling fan control configuration and functionality examples.", subs: [] },
+      { num: "25", title: "Gearbox Fan Control", page: 220, desc: "Gearbox-driven fan control configuration.", subs: [] },
+      { num: "26", title: "Enhanced Temperature Monitoring", page: 221, desc: "Generator temperature monitoring and engine cylinder temperature differential monitoring.", subs: [] },
+      { num: "27", title: "Dynamic Gas Blending", page: 225, desc: "Dynamic gas blending feature for dual-fuel operation.", subs: [] },
+      { num: "28", title: "Driven Equipment Control", page: 226, desc: "Control features for driven equipment applications.", subs: [] },
+      { num: "29", title: "Gas Train", page: 229, desc: "Gas train monitoring and valve proving system configuration.", subs: [] },
+      { num: "30", title: "Fuel Transfer", page: 236, desc: "Fuel load/unload operations and fuel transfer failure mode handling.", subs: [] },
+      { num: "31", title: "Emergency Shutdown Override (ESO)", page: 239, desc: "Emergency shutdown override feature and configuration.", subs: [] },
+      { num: "32", title: "Ethernet Ports", page: 241, desc: "Ethernet port configuration and network topology.", subs: [] },
+      { num: "33", title: "SCADA (Modbus TCP/IP) Data Link", page: 246, desc: "SCADA data link setup and Modbus TCP/IP configuration.", subs: [] },
+      { num: "34", title: "CAN Data Links", page: 248, desc: "CAN 1 and CAN 2 data link configuration, wiring, and network topology.", subs: [] },
+      { num: "35", title: "Supported Optional Modules", page: 251, desc: "CAN modules, RS-485 annunciator, Ethernet-based remote modules (remote DI/DO/AI/AO/RTD).", subs: [
+        { title: "CAN Modules", page: 251 },
+        { title: "RS-485 Annunciator", page: 251 },
+        { title: "Ethernet Remote Modules (DI/DO/AI/AO/RTD)", page: 254 }
+      ]},
+      { num: "36", title: "Integrated Voltage Regulator (IVR)", page: 267, desc: "IVR features, hardware installation (PWM, excitation module, fusing), software configuration (control source, starting profile, PID gains, under-frequency roll-off, line loss compensation, reactive droop, lockout, loss of sensing, over excitation), and voltage adjustment via digital/analog inputs.", subs: [
+        { title: "IVR Features", page: 267 },
+        { title: "IVR Hardware Installation", page: 268 },
+        { title: "IVR Software Configuration", page: 274 },
+        { title: "IVR Voltage Adjustment", page: 287 }
+      ]},
+      { num: "37", title: "Transient Load Relief (TLR)", page: 289, desc: "TLR operation, setpoint configuration, and tuning process.", subs: [] },
+      { num: "38", title: "Integrated PLC Feature Set", page: 304, desc: "PLC programming: logical operation blocks, function blocks, special function blocks, debug window blocks, PLC config creation program (PVC files, TCP/IP, editing, downloading, troubleshooting).", subs: [
+        { title: "Logical Operation Blocks", page: 305 },
+        { title: "Function Blocks", page: 309 },
+        { title: "Special Function Blocks", page: 310 },
+        { title: "PLC Config Creation Program", page: 317 }
+      ]},
+      { num: "39", title: "Web Server", page: 324, desc: "Built-in web server configuration and access.", subs: [] },
+      { num: "40", title: "Island Paralleling Functions", page: 327, desc: "Failsafe operation mode, Dead Bus Arbitration (DBA), synchronization (setpoints, gain tuning), load sharing (real/reactive, tuning guide, failsafe), Automatic Load Sense Load Demand (LSLD) with participation conditions, add/drop logic, sequence strategy, proactive add, redundancy (N+X), spinning reserve, and bus/intertie protections.", subs: [
+        { title: "Failsafe Operation Mode", page: 328 },
+        { title: "Dead Bus Arbitration (DBA)", page: 330 },
+        { title: "Synchronization", page: 336 },
+        { title: "Load Sharing (Real & Reactive)", page: 346 },
+        { title: "Load Sense Load Demand (LSLD)", page: 366 },
+        { title: "Bus / Intertie Protections", page: 386 }
+      ]},
+      { num: "41", title: "Utility Paralleling Functions", page: 390, desc: "Base load (kW) control, reactive load (VAR) and power factor (PF) control, utility paralleling protections (over/under frequency, over/under voltage).", subs: [
+        { title: "Base Load (kW) Control", page: 391 },
+        { title: "Reactive Load (VAR) & Power Factor", page: 393 },
+        { title: "Utility Paralleling Protections", page: 396 }
+      ]},
+      { num: "42", title: "Functional Safety", page: 407, desc: "Safety-critical functions: overvoltage, overcurrent, overspeed, emergency stop, parity inputs, engine shutdown functions (ECM/governor power removal, fuel gas shut-off), synchronization breaker control, and setpoint calibration.", subs: [
+        { title: "Overvoltage", page: 408 },
+        { title: "Overcurrent", page: 408 },
+        { title: "Overspeed", page: 409 },
+        { title: "Emergency Stop", page: 409 },
+        { title: "Parity Inputs", page: 410 },
+        { title: "Engine Shutdown Functions", page: 411 },
+        { title: "Synchronization Breaker Control", page: 414 }
+      ]}
+    ]
+  },
+  bop: {
+    title: "Balance of Plant Software Operations Manual",
+    file: "LEBE20720-00 ECS 200 BOP Software manual.pdf",
+    id: "LEBE20720-00",
+    pages: 159,
+    sections: [
+      { num: "1", title: "General Information", page: 9, desc: "Introduction, applications (JW/SCAC cooling, ventilation/CHP, or both), definitions, and references.", subs: [] },
+      { num: "2", title: "Safety", page: 11, desc: "Electrical safety and ESD awareness for BOP systems.", subs: [] },
+      { num: "3", title: "Glossary of Terms", page: 12, desc: "Definitions of Balance of Plant terminology.", subs: [] },
+      { num: "4", title: "Overview", page: 14, desc: "High-level overview of Balance of Plant features and system architecture.", subs: [] },
+      { num: "5", title: "Separate Circuit Aftercooler (3-Way Valve & Pump)", page: 15, desc: "SCAC system with 3-way valve PID control, end position sensors, pump control with follow-up delay and immediate stop, control setpoints, diagnostics/feedback, I/O mapping, and HMI display screens.", subs: [
+        { title: "Functional Description & Flow Diagram", page: 15 },
+        { title: "3-Way Valve Control (PID)", page: 16 },
+        { title: "Pump Control", page: 18 },
+        { title: "Control Setpoints", page: 18 },
+        { title: "Diagnostics & Feedback", page: 20 },
+        { title: "HMI Display (Overview & Configure)", page: 22 }
+      ]},
+      { num: "6", title: "Separate Circuit Aftercooler (Radiator Control)", page: 31, desc: "SCAC radiator control with VFD (variable frequency drive) and staged single-speed fan options, temperature setpoint calculation, PID control, control setpoints, diagnostics, and HMI displays.", subs: [
+        { title: "VFD Radiator Control", page: 32 },
+        { title: "Staged Radiator Control (Single Speed)", page: 34 },
+        { title: "Control Setpoints", page: 36 },
+        { title: "Diagnostics & Feedback", page: 38 },
+        { title: "HMI Display", page: 40 }
+      ]},
+      { num: "7", title: "Engine Cooling Circuit (3-Way Valve & Pump)", page: 51, desc: "Engine jacket water cooling with 3-way valve control and pump management.", subs: [] },
+      { num: "8", title: "Engine Cooling Circuit (Radiator Control)", page: 60, desc: "Engine cooling radiator control with VFD and staged switching options, temperature setpoint calculation, control setpoints, diagnostics, and HMI displays.", subs: [
+        { title: "VFD/Staged Radiator Control", page: 60 },
+        { title: "Control Setpoints", page: 64 },
+        { title: "Diagnostics & Feedback", page: 67 },
+        { title: "HMI Display", page: 70 }
+      ]},
+      { num: "9", title: "Dual Core Radiator", page: 74, desc: "Dual core radiator control for power-only mode with VFD or stage switching, control deviation calculation, setpoints, diagnostics, and HMI displays.", subs: [] },
+      { num: "10", title: "Customer Site Heating Circuit (3-Way Valve & Pump)", page: 80, desc: "Customer heating circuit with heat exchanger, 3-way valve control (installed in heating or engine cooling circuit), pump control, setpoints, diagnostics, and HMI displays.", subs: [
+        { title: "Functional Description & Flow Diagram", page: 80 },
+        { title: "3-Way Valve & Pump Control", page: 81 },
+        { title: "Control Setpoints", page: 82 },
+        { title: "Diagnostics & Feedback", page: 84 },
+        { title: "HMI Display", page: 87 }
+      ]},
+      { num: "11", title: "Exhaust Heat Exchanger Bypass with Customer Heating", page: 92, desc: "Exhaust heat exchanger bypass control for customer site heating circuit, exhaust gas valve control, setpoints, diagnostics, and HMI displays.", subs: [
+        { title: "Operational Logic & Flow Diagrams", page: 92 },
+        { title: "Exhaust Gas Valves Control", page: 94 },
+        { title: "Control Setpoints", page: 94 },
+        { title: "Diagnostics & Feedback", page: 96 }
+      ]},
+      { num: "12", title: "Genset Enclosure Ventilation Control", page: 103, desc: "Ventilation control with and without circulating air, control sequence (ventilation fan, inlet/outlet louvers, standby ventilation), setpoints, diagnostics, and HMI displays.", subs: [
+        { title: "Without Circulating Air", page: 103 },
+        { title: "With Circulating Air", page: 104 },
+        { title: "Control Sequence (Fan, Louvers)", page: 105 },
+        { title: "Control Setpoints", page: 108 },
+        { title: "Diagnostics & Feedback", page: 112 },
+        { title: "HMI Display", page: 116 }
+      ]},
+      { num: "13", title: "Smoke/Fire Alarm & Ventilation Override", page: 121, desc: "Fire alarm reaction, full ventilation reaction for gas alarm, prioritization logic between fire and gas alarms, setpoints, and diagnostics.", subs: [] },
+      { num: "14", title: "Exhaust Gas & Auxiliary Temperature Sensors CHP", page: 124, desc: "Additional exhaust gas temperature I/O, trip setpoint calculation, auxiliary temperature sensors, control setpoints, diagnostics, and HMI displays.", subs: [] },
+      { num: "15", title: "Balance of Plant Ethernet I/O Module", page: 135, desc: "BOP Ethernet I/O module configuration codes for CHP & Container, JW & SCAC, and combined configurations. Includes HMI display requirements for DI/DO/AI/AO.", subs: [
+        { title: "Config Code: CHP & Container", page: 136 },
+        { title: "Config Code: JW & SCAC", page: 138 },
+        { title: "Config Code: JW, SCAC, CHP, Container", page: 140 },
+        { title: "HMI Display (DI/DO/AI/AO)", page: 143 }
+      ]}
+    ]
+  },
+  scada: {
+    title: "Cat ECS SCADA Modbus Software Manual",
+    file: "LEBE23522-00 ECS 100-200 SCADA Manual.pdf",
+    id: "LEBE23522-00",
+    pages: 91,
+    sections: [
+      { num: "1", title: "General Information", page: 7, desc: "Introduction, applications, and references for the ECS SCADA Modbus interface.", subs: [] },
+      { num: "2", title: "Safety", page: 9, desc: "Electrical safety for SCADA system installation.", subs: [] },
+      { num: "3", title: "Glossary of Terms", page: 10, desc: "Definitions of SCADA and Modbus terminology.", subs: [] },
+      { num: "4", title: "Cat ECS SCADA Modbus Overview", page: 13, desc: "High-level overview of the Modbus TCP/IP SCADA interface and supported features.", subs: [] },
+      { num: "5", title: "SCADA Data Link Setup & Configuration", page: 14, desc: "IP configuration via Cat ET, data link enabling with password setup via Cat ET and HMI display, and SCADA access password specifics.", subs: [
+        { title: "SCADA IP Configuration via Cat ET", page: 14 },
+        { title: "Data Link Enabling & Password Setup", page: 15 },
+        { title: "SCADA Configuration via HMI", page: 15 },
+        { title: "Access Password Specifics", page: 17 }
+      ]},
+      { num: "6", title: "Data Interpretation & Scaling", page: 18, desc: "Numerical data handling: 1-word and 2-word unsigned integer read/write, byte extracting/packing, state/status/command/information data types, and complex data structures.", subs: [
+        { title: "Numerical Data (1-Word & 2-Word)", page: 18 },
+        { title: "Byte Extracting & Packing", page: 21 },
+        { title: "State / Status / Command Data", page: 23 },
+        { title: "Complex Data", page: 23 }
+      ]},
+      { num: "7", title: "Cat ECS Modbus Data", page: 24, desc: "Complete Modbus register maps: Genset data (ratings, AC, power, energy, state/mode, start/stop, battery, base load, PF, LSLD, load share, utility transfer, temperatures, paralleling data), Engine data (service meter, speed, fuel, oil, coolant, exhaust, intake, turbocharger, filters, aftertreatment, gas, DGB), programmable cycle timer, real-time clock, and I/O read/write registers.", subs: [
+        { title: "Genset Registers (Ratings, AC, Power, Energy)", page: 25 },
+        { title: "Genset State, Mode & Status", page: 30 },
+        { title: "Genset Start/Stop & Control Commands", page: 31 },
+        { title: "Load Share, LSLD & Paralleling Data", page: 32 },
+        { title: "Engine Data (Speed, Fuel, Oil, Coolant, Exhaust)", page: 38 },
+        { title: "Engine Aftertreatment & Gas", page: 41 },
+        { title: "Programmable Cycle Timer", page: 46 },
+        { title: "Real-Time Clock", page: 47 },
+        { title: "I/O Read/Write Registers", page: 48 }
+      ]},
+      { num: "8", title: "Cat ECS Events", page: 52, desc: "SCADA event handling: acknowledge/reset, acknowledge status, shutdown/lamp/horn/display events, user alarm groups (alarm bit packing), annunciator, and event logs (active events, system events, status events).", subs: [
+        { title: "Acknowledge & Reset", page: 52 },
+        { title: "Shutdown, Lamp, Horn & Display Events", page: 52 },
+        { title: "User Alarm Groups (Bit Packing)", page: 53 },
+        { title: "Annunciator", page: 54 },
+        { title: "Event Logs", page: 55 }
+      ]},
+      { num: "9", title: "Network & Module", page: 57, desc: "Network status registers, module online status, and module information data.", subs: [] },
+      { num: "10", title: "Grid Code", page: 60, desc: "Grid code compliance data registers and configuration.", subs: [] },
+      { num: "11", title: "Balance of Plant", page: 66, desc: "BOP-specific Modbus registers for CHP and thermal management systems.", subs: [] },
+      { num: "12", title: "Examples", page: 68, desc: "Practical examples of SCADA Modbus data reading and writing operations.", subs: [] }
+    ]
+  }
+};
+
+// Current view
+let currentView = 'overview';
+
+// Build PDF URL with page number
+function pdfUrl(file, page) {
+  return encodeURIComponent(file) + '#page=' + page;
+}
+
+// Open PDF at a specific page
+function openPdfAt(docKey, page) {
+  const doc = docs[docKey];
+  window.open(pdfUrl(doc.file, page), '_blank');
+}
+
+// Render sections for a document
+function renderSections(docKey) {
+  const doc = docs[docKey];
+  const container = document.getElementById(`sections-${docKey}`);
+  if (!container) return;
+
+  container.innerHTML = doc.sections.map(section => `
+    <div class="section-card" onclick="openPdfAt('${docKey}', ${section.page})">
+      <div class="section-header">
+        <span class="section-num">${section.num}</span>
+        <span class="section-title">${section.title}</span>
+      </div>
+      <div class="section-desc">${section.desc}</div>
+      <div class="section-page-link">
+        <span class="section-page">📄 Page ${section.page}</span>
+        <span class="open-at-page">Open PDF → p.${section.page}</span>
+      </div>
+      ${section.subs.length > 0 ? `
+        <div class="subsections">
+          ${section.subs.map(sub => `
+            <div class="subsection" onclick="event.stopPropagation(); openPdfAt('${docKey}', ${sub.page})">
+              <span>${sub.title}</span>
+              <span class="open-at-page">p.${sub.page} →</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// Show a specific view
+function showView(viewKey) {
+  currentView = viewKey;
+
+  // Update sidebar
+  document.querySelectorAll('.doc-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.doc === viewKey);
+  });
+
+  // Update views
+  document.querySelectorAll('.doc-detail').forEach(view => {
+    view.classList.remove('active');
+  });
+  document.getElementById(`view-${viewKey}`).classList.add('active');
+
+  // Update topbar
+  const titles = {
+    overview: 'Overview Dashboard',
+    hw: 'Controller Hardware Manual',
+    hmi: 'HMI Manual – Paralleling Genset Control',
+    sw: 'Software Operations Manual',
+    bop: 'Balance of Plant Software Manual',
+    scada: 'SCADA Modbus Manual'
+  };
+  document.getElementById('topbarTitle').textContent = titles[viewKey] || '';
+
+  // Update topbar actions
+  const actions = document.getElementById('topbarActions');
+  if (viewKey !== 'overview' && docs[viewKey]) {
+    const doc = docs[viewKey];
+    actions.innerHTML = `
+      <a class="btn btn-primary" href="${pdfUrl(doc.file, 1)}" target="_blank">📄 Open Full PDF</a>
+    `;
+  } else {
+    actions.innerHTML = '';
+  }
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+
+  // Clear search
+  document.getElementById('globalSearch').value = '';
+  document.getElementById('searchResults').classList.remove('visible');
+}
+
+// Search functionality - returns granular matches with direct PDF page links
+function handleSearch(query) {
+  const resultsEl = document.getElementById('searchResults');
+  const listEl = document.getElementById('resultsList');
+  const countEl = document.getElementById('resultCount');
+
+  if (!query || query.length < 2) {
+    resultsEl.classList.remove('visible');
+    return;
+  }
+
+  const q = query.toLowerCase();
+  const allMatches = []; // flat list of every individual hit
+
+  Object.entries(docs).forEach(([key, doc]) => {
+    doc.sections.forEach(section => {
+      const titleMatch = section.title.toLowerCase().includes(q);
+      const descMatch = section.desc.toLowerCase().includes(q);
+
+      // Check section-level match
+      if (titleMatch || descMatch) {
+        allMatches.push({
+          docKey: key,
+          docTitle: doc.title,
+          docId: doc.id,
+          file: doc.file,
+          sectionNum: section.num,
+          sectionTitle: section.title,
+          matchTitle: section.title,
+          matchDesc: descMatch ? getSnippet(section.desc, q) : '',
+          page: section.page,
+          type: 'section'
+        });
+      }
+
+      // Check every subsection independently
+      section.subs.forEach(sub => {
+        const subTitleMatch = sub.title.toLowerCase().includes(q);
+        // Also match if the parent desc mentions it
+        if (subTitleMatch) {
+          allMatches.push({
+            docKey: key,
+            docTitle: doc.title,
+            docId: doc.id,
+            file: doc.file,
+            sectionNum: section.num,
+            sectionTitle: section.title,
+            matchTitle: sub.title,
+            matchDesc: '',
+            page: sub.page,
+            type: 'subsection'
+          });
+        }
+      });
+    });
+  });
+
+  const totalMatches = allMatches.length;
+  countEl.textContent = `(${totalMatches} location${totalMatches !== 1 ? 's' : ''} found)`;
+
+  if (totalMatches > 0) {
+    resultsEl.classList.add('visible');
+    listEl.innerHTML = allMatches.map(m => `
+      <div class="search-result-item">
+        <div class="result-header">
+          <div style="flex:1">
+            <div class="result-section">
+              <span class="result-doc-badge">${m.docId}</span>
+              ${m.type === 'subsection' ? `§${m.sectionNum} ${m.sectionTitle} ▸ ` : `§${m.sectionNum} `}${highlightText(m.matchTitle, query)}
+            </div>
+            <div class="result-doc">${m.docTitle} · Page ${m.page}</div>
+            ${m.matchDesc ? `<div class="result-desc">${m.matchDesc}</div>` : ''}
+          </div>
+          <a class="open-at-page" href="${pdfUrl(m.file, m.page)}" target="_blank" onclick="event.stopPropagation()" style="flex-shrink:0">Open PDF → p.${m.page}</a>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    resultsEl.classList.add('visible');
+    listEl.innerHTML = '<div style="padding:16px;color:#999;text-align:center;">No results found. Try a different term like "ethernet", "load share", or "temperature".</div>';
+  }
+}
+
+// Get a short text snippet around the matched query in a description
+function getSnippet(desc, query) {
+  const idx = desc.toLowerCase().indexOf(query);
+  if (idx === -1) return '';
+  const start = Math.max(0, idx - 60);
+  const end = Math.min(desc.length, idx + query.length + 60);
+  let snippet = '';
+  if (start > 0) snippet += '…';
+  snippet += desc.substring(start, end);
+  if (end < desc.length) snippet += '…';
+  return highlightText(snippet, query);
+}
+
+function highlightText(text, query) {
+  if (!query) return text;
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(regex, '<span class="highlight">$1</span>');
+}
+
+// Mobile sidebar toggle
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(docs).forEach(renderSections);
+});
+</script>
+
+</body>
+</html>
