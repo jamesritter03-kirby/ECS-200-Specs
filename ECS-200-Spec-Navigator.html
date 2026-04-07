@@ -766,6 +766,158 @@
     }
 
     .tab-btn:hover:not(.active) { background: #f0f2f5; }
+
+    /* Modbus Register View */
+    .modbus-intro {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+      border-left: 4px solid #17a2b8;
+    }
+    .modbus-intro h3 { font-size: 1.1rem; margin-bottom: 12px; color: var(--cat-black); }
+    .modbus-intro p { font-size: 0.88rem; color: #555; line-height: 1.7; margin-bottom: 8px; }
+
+    .conn-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .conn-info-box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 14px 18px;
+      border-left: 3px solid var(--cat-yellow);
+    }
+    .conn-info-box .conn-label { font-size: 0.72rem; text-transform: uppercase; color: #888; font-weight: 700; letter-spacing: 0.5px; }
+    .conn-info-box .conn-value { font-size: 1.05rem; font-weight: 800; color: var(--cat-black); margin-top: 4px; }
+    .conn-info-box .conn-note { font-size: 0.72rem; color: #999; margin-top: 2px; }
+
+    .poll-group {
+      background: var(--cat-white);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .poll-group-header {
+      padding: 18px 24px;
+      background: linear-gradient(135deg, var(--cat-black) 0%, var(--cat-dark) 100%);
+      color: var(--cat-white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .poll-group-header:hover { background: linear-gradient(135deg, #222 0%, #3a3a3a 100%); }
+    .poll-group-header h4 { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .poll-group-header .poll-badge {
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .poll-group-header .poll-count {
+      font-size: 0.78rem;
+      opacity: 0.7;
+    }
+    .poll-group-header .poll-toggle {
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+    .poll-group.collapsed .poll-group-body { display: none; }
+    .poll-group.collapsed .poll-toggle { transform: rotate(-90deg); }
+
+    .poll-group-body { padding: 0; }
+
+    .reg-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .reg-table thead th {
+      background: #f8f9fa;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+    }
+    .reg-table tbody tr { transition: background 0.2s; }
+    .reg-table tbody tr:hover { background: #fff8e1; }
+    .reg-table tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    .reg-table .reg-num {
+      font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+      font-weight: 700;
+      color: var(--cat-black);
+      white-space: nowrap;
+    }
+    .reg-table .reg-name { font-weight: 600; color: #333; }
+    .reg-table .reg-words {
+      text-align: center;
+      font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .reg-table .reg-scaling {
+      font-size: 0.75rem;
+      color: #888;
+      font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    }
+    .reg-table .reg-src {
+      font-size: 0.68rem;
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+    .reg-src-scada { background: #e3f2fd; color: #1565c0; }
+    .reg-src-page { cursor: pointer; }
+    .reg-src-page:hover { text-decoration: underline; }
+
+    .poll-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .poll-summary-card {
+      background: var(--cat-white);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+      border-top: 4px solid var(--cat-yellow);
+    }
+    .poll-summary-card .ps-rate { font-size: 1.6rem; font-weight: 800; color: var(--cat-black); }
+    .poll-summary-card .ps-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .poll-summary-card .ps-detail { font-size: 0.78rem; color: #555; margin-top: 6px; }
+
+    .modbus-notes {
+      background: #fff3cd;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      border-left: 4px solid #ffc107;
+    }
+    .modbus-notes h5 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: #856404; }
+    .modbus-notes ul { padding-left: 18px; margin: 0; }
+    .modbus-notes li { font-size: 0.82rem; color: #856404; line-height: 1.6; margin-bottom: 4px; }
   </style>
 </head>
 <body>
@@ -827,6 +979,15 @@
           <h3>SCADA Modbus Manual</h3>
           <div class="doc-id">LEBE23522-00</div>
           <div class="doc-pages">91 pages</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--cat-gray);margin:8px 0;"></div>
+      <div class="doc-item" data-doc="modbus" onclick="showView('modbus')">
+        <div class="doc-icon" style="background:#17a2b8;color:#fff;">📋</div>
+        <div class="doc-info">
+          <h3>Suggested SCADA Registers</h3>
+          <div class="doc-id">1-Second Polling List</div>
+          <div class="doc-pages" style="color:#17a2b8;">Curated from SCADA Manual</div>
         </div>
       </div>
     </div>
@@ -1491,6 +1652,499 @@
         <div class="sections-container" id="sections-scada"></div>
       </div>
 
+      <!-- MODBUS SUGGESTED REGISTERS VIEW -->
+      <div class="doc-detail" id="view-modbus">
+
+        <!-- Connection Summary -->
+        <div class="modbus-intro">
+          <h3>📋 Suggested Modbus Register Polling List — ECS 200 Paralleling</h3>
+          <p>This curated register list is designed for a <strong>typical 1-second SCADA polling cycle</strong> monitoring one or more Cat® ECS 200P paralleling genset controllers. Registers are grouped by priority and function, organized to support efficient batch reads (contiguous register blocks where possible).</p>
+          <p>All register numbers below are for the <strong>ECS 200 Paralleling (200P)</strong> column from the SCADA manual unless otherwise noted. Engine sensor data is read from the ECS 200G (genset) register set, accessible through the paralleling controller's CAN data link.</p>
+          <div class="conn-info-grid">
+            <div class="conn-info-box">
+              <div class="conn-label">Read Port</div>
+              <div class="conn-value">TCP 502</div>
+              <div class="conn-note">Modbus TCP — Read registers</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Write Port</div>
+              <div class="conn-value">TCP 50200</div>
+              <div class="conn-note">Commands &amp; setpoints</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Status Port</div>
+              <div class="conn-value">TCP 50201</div>
+              <div class="conn-note">Events, module status, logs</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Function Codes</div>
+              <div class="conn-value">03 / 16</div>
+              <div class="conn-note">Read Holding / Write Multiple</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Max Registers</div>
+              <div class="conn-value">125 / read</div>
+              <div class="conn-note">Per single transaction</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Byte Order</div>
+              <div class="conn-value">Big-Endian</div>
+              <div class="conn-note">MSW at lower address</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Polling Summary -->
+        <div class="poll-summary">
+          <div class="poll-summary-card">
+            <div class="ps-rate">1 s</div>
+            <div class="ps-label">Critical Real-Time</div>
+            <div class="ps-detail">AC power, voltage, current, frequency, breaker &amp; bus status, operating state</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">1 s</div>
+            <div class="ps-label">Engine &amp; Protection</div>
+            <div class="ps-detail">Oil pressure, coolant temp, battery, speed, fuel level, alarm groups</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">1–2 s</div>
+            <div class="ps-label">Paralleling / Load Mgmt</div>
+            <div class="ps-detail">DBA state, sync mode, load share, LSLD, per-unit paralleling data</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">5–30 s</div>
+            <div class="ps-label">Slow-Changing Data</div>
+            <div class="ps-detail">Energy meters, engine hours, exhaust temps, I/O, network status, clock</div>
+          </div>
+        </div>
+
+        <!-- Best Practices Callout -->
+        <div class="modbus-notes">
+          <h5>⚡ Best Practices from SCADA Manual §13</h5>
+          <ul>
+            <li><strong>Batch reads</strong> — Read contiguous register blocks in a single FC03 transaction (up to 125 registers). The groups below are arranged to support this.</li>
+            <li><strong>Data prioritization</strong> — Poll critical registers every 1 s, slow-changing data every 5–30 s. Use the User Alarm Groups (regs 101–110) for event-driven alerting instead of polling hundreds of event registers.</li>
+            <li><strong>Persistent connections</strong> — Keep TCP connections open; do not create a new socket per transaction.</li>
+            <li><strong>Retry with limits</strong> — Implement retries for failed reads but limit to 2–3 attempts. Use timeouts of 1000–3000 ms.</li>
+            <li><strong>Two-word registers</strong> — Power/energy registers are 32-bit (2 words). MSW is at the lower address. Combine as: <code>value = (MSW &lt;&lt; 16) | LSW</code>, then apply scaling and offset.</li>
+          </ul>
+        </div>
+
+        <!-- GROUP 1: Generator AC Electrical -->
+        <div class="poll-group" id="pg-gen-ac">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-gen-ac')">
+            <h4>⚡ Generator AC Electrical <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~18 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">150</td><td class="reg-name">Average Line-Line Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">180</td><td class="reg-name">Voltage L1-L2</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">181</td><td class="reg-name">Voltage L2-L3</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">182</td><td class="reg-name">Voltage L3-L1</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">183</td><td class="reg-name">Voltage L1-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">184</td><td class="reg-name">Voltage L2-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">185</td><td class="reg-name">Voltage L3-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">152</td><td class="reg-name">Average Current</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">186</td><td class="reg-name">Current L1</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">187</td><td class="reg-name">Current L2</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">188</td><td class="reg-name">Current L3</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">157</td><td class="reg-name">Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">159</td><td class="reg-name">Average Power Factor</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">189</td><td class="reg-name">Power Factor L1</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">190</td><td class="reg-name">Power Factor L2</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">191</td><td class="reg-name">Power Factor L3</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 2: Generator Power -->
+        <div class="poll-group" id="pg-gen-pwr">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-gen-pwr')">
+            <h4>🔋 Generator Power (Real / Reactive / Apparent) <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">6 registers (3×2-word) · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">155–156</td><td class="reg-name">Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">205–206</td><td class="reg-name">Reactive Power (kVAR)</td><td class="reg-words">2</td><td class="reg-scaling">1 VAR/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">202–203</td><td class="reg-name">Apparent Power (kVA)</td><td class="reg-words">2</td><td class="reg-scaling">1 VA/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 3: Operating State & Breaker Status -->
+        <div class="poll-group" id="pg-state">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-state')">
+            <h4>🔀 Operating State &amp; Breaker Status <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~10 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">229</td><td class="reg-name">Generator Circuit Breaker Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Open, 1=Closed, 2=Error, 3=Disabled/NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">230</td><td class="reg-name">Operating Mode</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Manual, 2=Auto, 3=Test</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">228</td><td class="reg-name">Genset Available Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Not Available, 1=Available, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">730</td><td class="reg-name">Dead Bus Arb (DBA) State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — see manual for full states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">731</td><td class="reg-name">Dead Bus Arb Last Fail Reason</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated failure codes</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">738</td><td class="reg-name">Synchronize Mode / State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated sync states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">231</td><td class="reg-name">Genset Auto Start State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Stopped, Cranking, Running, Cooldown…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">232</td><td class="reg-name">Engine Run Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Running, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">40</td><td class="reg-name">Battery Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1/20 V/bit, 0 offset (0–3276 V)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 4: Engine Sensor Data (200G) -->
+        <div class="poll-group" id="pg-engine">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-engine')">
+            <h4>🛢️ Engine Sensor Data <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~12 registers · Port 502 · 200G column</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">154</td><td class="reg-name">Engine Speed (RPM)</td><td class="reg-words">1</td><td class="reg-scaling">0.125 rpm/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',39)">§7.2 p.39</span></td></tr>
+                <tr><td class="reg-num">41</td><td class="reg-name">Oil Pressure</td><td class="reg-words">1</td><td class="reg-scaling">1/128 psi/bit, 0 offset (0–511 psi)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',40)">§7.3 p.40</span></td></tr>
+                <tr><td class="reg-num">59</td><td class="reg-name">Oil Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',40)">§7.3 p.40</span></td></tr>
+                <tr><td class="reg-num">42</td><td class="reg-name">Coolant Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset (–273 to 1775°F)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',41)">§7.4 p.41</span></td></tr>
+                <tr><td class="reg-num">43</td><td class="reg-name">Fuel Level</td><td class="reg-words">1</td><td class="reg-scaling">1/2.56 %/bit, 0 offset (0–100%)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',39)">§7.2 p.39</span></td></tr>
+                <tr><td class="reg-num">57</td><td class="reg-name">Exhaust Temperature L-Bank</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',42)">§7.5 p.42</span></td></tr>
+                <tr><td class="reg-num">58</td><td class="reg-name">Exhaust Temperature R-Bank</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',42)">§7.5 p.42</span></td></tr>
+                <tr><td class="reg-num">46</td><td class="reg-name">Intake Manifold Air Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',43)">§7.6 p.43</span></td></tr>
+                <tr><td class="reg-num">49</td><td class="reg-name">Turbocharger Boost Pressure</td><td class="reg-words">1</td><td class="reg-scaling">1/128 psi/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',44)">§7.7 p.44</span></td></tr>
+                <tr><td class="reg-num">65</td><td class="reg-name">Engine Hours</td><td class="reg-words">2</td><td class="reg-scaling">0.05 hr/bit, 0 offset (0–210,554,060.75 hr)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',47)">§7.10 p.47</span></td></tr>
+                <tr><td class="reg-num">62</td><td class="reg-name">Fuel Consumption Rate</td><td class="reg-words">1</td><td class="reg-scaling">0.05 L/hr per bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',47)">§7.10 p.47</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 5: Alarm Groups & Events -->
+        <div class="poll-group" id="pg-alarms">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-alarms')">
+            <h4>🚨 Alarms &amp; Events <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~16 registers · Port 502 &amp; 50201</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">101</td><td class="reg-name">User Alarm Group A</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">102</td><td class="reg-name">User Alarm Group B</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">103</td><td class="reg-name">User Alarm Group C</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">104–110</td><td class="reg-name">User Alarm Groups D–J</td><td class="reg-words">7</td><td class="reg-scaling">16-bit packed each (160 total configurable alarms)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">System Event Lamp Status</td><td class="reg-words">1</td><td class="reg-scaling">Bits 3:2 Amber Lamp, Bits 1:0 Red Lamp</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">3</td><td class="reg-name">System Horn Active Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True, 2=Error, 3=Disabled</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">4</td><td class="reg-name">Hard Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">Boolean active/inactive</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">5</td><td class="reg-name">Soft Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">Boolean active/inactive</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Tip:</strong> Configure User Alarm Groups A–J in Cat ET to map your most critical SPN-FMI events into bit-packed words. This lets you monitor up to 160 alarms with just 10 register reads — far more efficient than polling individual event logs.
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 6: Load Share & Load Demand (LSLD) -->
+        <div class="poll-group" id="pg-lsld">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-lsld')">
+            <h4>⚖️ Load Share &amp; Load Sense Load Demand (LSLD) <span class="poll-badge">1–2 SEC</span></h4>
+            <div><span class="poll-count">~20 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">764</td><td class="reg-name">Load Share / Control State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated load control states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',36)">§7.1 p.36</span></td></tr>
+                <tr><td class="reg-num">1805</td><td class="reg-name">Generator Real Load Control State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Isochronous, Base Load, Droop…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',36)">§7.1 p.36</span></td></tr>
+                <tr><td class="reg-num">1737</td><td class="reg-name">Gen Real Load Control Base Load Setpoint</td><td class="reg-words">1</td><td class="reg-scaling">% of rated — see §10 Grid Code</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',60)">§10 p.60</span></td></tr>
+                <tr><td class="reg-num">1466</td><td class="reg-name">LSLD State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Idle, Adding, Removing, Shed…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1467</td><td class="reg-name">LSLD Desired Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset (0–32)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">750</td><td class="reg-name">System — Number of Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">751</td><td class="reg-name">System — Number of Units Available</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">752</td><td class="reg-name">System — Number of EPS Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">753</td><td class="reg-name">System — Number of EPS Units Available</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">756–757</td><td class="reg-name">System Total Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">758</td><td class="reg-name">System Total Percent Load</td><td class="reg-words">1</td><td class="reg-scaling">0.4 %/bit, 0 offset (0–100%)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">1465</td><td class="reg-name">LSLD Priority Mode</td><td class="reg-words">1</td><td class="reg-scaling">First On-First Off, Hourmeter, Manual, FIFO-EPS…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1468</td><td class="reg-name">LSLD Add Timer Remaining</td><td class="reg-words">1</td><td class="reg-scaling">1 s/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1469</td><td class="reg-name">LSLD Remove Timer Remaining</td><td class="reg-words">1</td><td class="reg-scaling">1 s/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 7: Per-Unit Paralleling Data (Gen #1) -->
+        <div class="poll-group" id="pg-parallel">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-parallel')">
+            <h4>🔗 Per-Unit Paralleling Data (Gen #1 Example) <span class="poll-badge">1–2 SEC</span></h4>
+            <div><span class="poll-count">~22 regs per unit × N units · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">759</td><td class="reg-name">Gen #1 — Warning Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">760</td><td class="reg-name">Gen #1 — Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">761</td><td class="reg-name">Gen #1 — DBA Status</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated DBA states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">762</td><td class="reg-name">Gen #1 — Load Share Status</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated load share states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">763</td><td class="reg-name">Gen #1 — Average Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">764</td><td class="reg-name">Gen #1 — Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">765–766</td><td class="reg-name">Gen #1 — Real Power</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2B offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">767</td><td class="reg-name">Gen #1 — Breaker Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Open, 1=Closed, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">768</td><td class="reg-name">Gen #1 — Operating Mode</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Manual, 2=Auto, 3=Test</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">769</td><td class="reg-name">Gen #1 — Genset Available</td><td class="reg-words">1</td><td class="reg-scaling">0=Not Available, 1=Available</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">770</td><td class="reg-name">Gen #1 — Engine Run Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Running</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">780</td><td class="reg-name">Gen #1 — % Rated kW Load</td><td class="reg-words">1</td><td class="reg-scaling">0.4 %/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Block read pattern:</strong> Gen #1 = regs 759–780 (22 words). Gen #2 starts at 781. Gen #N starts at 759 + (N–1) × 22. Supports up to 32 units. Read the entire block for all online units in one or two transactions.
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 8: Generator Ratings (slow) -->
+        <div class="poll-group" id="pg-ratings">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-ratings')">
+            <h4>📊 Generator Ratings &amp; Configuration <span class="poll-badge">30 SEC</span></h4>
+            <div><span class="poll-count">~7 registers · Port 502 · Read once / slow poll</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">214</td><td class="reg-name">Rated Line-Line Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">215</td><td class="reg-name">Rated Line-Neutral Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">216</td><td class="reg-name">Rated Current</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">217</td><td class="reg-name">Rated Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">218–219</td><td class="reg-name">Rated Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">220</td><td class="reg-name">Rated Power Factor</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 9: Energy Meters -->
+        <div class="poll-group" id="pg-energy">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-energy')">
+            <h4>📈 Energy Meters <span class="poll-badge">5–30 SEC</span></h4>
+            <div><span class="poll-count">~8 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">208–209</td><td class="reg-name">kWh (Positive Real Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 Wh/bit, 0 offset (0–4.29B Wh)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">210–211</td><td class="reg-name">kVARh (Positive Reactive Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 VARh/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">212–213</td><td class="reg-name">kWh (Negative Real Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 Wh/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 10: I/O Status -->
+        <div class="poll-group" id="pg-io">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-io')">
+            <h4>🔌 I/O Status Registers <span class="poll-badge">5 SEC</span></h4>
+            <div><span class="poll-count">~16 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">700</td><td class="reg-name">Onboard Discrete Input Status (DI 1–12)</td><td class="reg-words">1</td><td class="reg-scaling">Bit-packed: Bit 0–11 = DI1–DI12</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">701</td><td class="reg-name">Onboard Isolated DI Status</td><td class="reg-words">1</td><td class="reg-scaling">Bit 0 = Isolated DI</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">702</td><td class="reg-name">Onboard Discrete Output Status (DO 1–12)</td><td class="reg-words">1</td><td class="reg-scaling">Bit-packed: Bit 0–11 = DO1–DO12</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">703</td><td class="reg-name">Onboard Analog Input #1 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent (configured in Cat ET)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">704</td><td class="reg-name">Onboard Analog Input #2 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">705</td><td class="reg-name">Onboard Analog Input #3 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">706–707</td><td class="reg-name">Onboard Analog Output #1 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">708–709</td><td class="reg-name">Onboard Analog Output #2 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">710–711</td><td class="reg-name">Onboard PWM Output #1 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+                <tr><td class="reg-num">712–713</td><td class="reg-name">Onboard PWM Output #2 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+                <tr><td class="reg-num">714–715</td><td class="reg-name">Onboard PWM Output #3 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 11: Network & Module Status -->
+        <div class="poll-group" id="pg-network">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-network')">
+            <h4>🌐 Network &amp; Module Status <span class="poll-badge">5–30 SEC</span></h4>
+            <div><span class="poll-count">~10 registers · Port 502 &amp; 50201</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">350</td><td class="reg-name">Primary Data Link Status</td><td class="reg-words">1</td><td class="reg-scaling">00=OK, 01=Fault, 11=Disabled/NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.1 p.57</span></td></tr>
+                <tr><td class="reg-num">577–582</td><td class="reg-name">Ethernet Port A/B, 4-Wire #1–#4 Status</td><td class="reg-words">6</td><td class="reg-scaling">0=Disabled, 1=Enabled (per port)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.1 p.57</span></td></tr>
+              </tbody>
+            </table>
+            <table class="reg-table" style="border-top:2px solid #e8e8e8;">
+              <thead>
+                <tr><th>Register</th><th>Description (Port 50201)</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">1</td><td class="reg-name">Paralleling Controller Online</td><td class="reg-words">1</td><td class="reg-scaling">0=Offline, 1=Online (always True for self)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.2 p.57</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Engine ECM Online</td><td class="reg-words">1</td><td class="reg-scaling">0=Offline, 1=Online</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.2 p.57</span></td></tr>
+                <tr><td class="reg-num">16</td><td class="reg-name">Active Events Count — Genset Controller</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',55)">§8.6 p.55</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Active Events Count — Paralleling Ctrl</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset (Port 50201)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',55)">§8.6 p.55</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 12: Real-Time Clock -->
+        <div class="poll-group" id="pg-clock">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-clock')">
+            <h4>🕐 Real-Time Clock <span class="poll-badge">30 SEC</span></h4>
+            <div><span class="poll-count">3 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">245</td><td class="reg-name">Date (MM/DD packed)</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+                <tr><td class="reg-num">246</td><td class="reg-name">Year</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+                <tr><td class="reg-num">247</td><td class="reg-name">Time (HH:MM:SS packed)</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GROUP 13: Write Commands Reference -->
+        <div class="poll-group" id="pg-write">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-write')">
+            <h4>✍️ Write Commands Reference (Port 50200) <span class="poll-badge">ON DEMAND</span></h4>
+            <div><span class="poll-count">Key write registers · FC16</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">1</td><td class="reg-name">Alarm Acknowledge Command</td><td class="reg-words">1</td><td class="reg-scaling">0=FALSE, 1=TRUE</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.1 p.52</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Reset All Events Command</td><td class="reg-words">1</td><td class="reg-scaling">0=FALSE, 1=TRUE</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.1 p.52</span></td></tr>
+                <tr><td class="reg-num">102</td><td class="reg-name">Auto Mode Command</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated mode commands</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">103</td><td class="reg-name">Start Command</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Start, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">104</td><td class="reg-name">Stop Command</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Stop, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">6–7</td><td class="reg-name">Base Load Setpoint (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">8–9</td><td class="reg-name">Base PF Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">10–11</td><td class="reg-name">Base VAR Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1 VAR/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">14–15</td><td class="reg-name">Base Voltage Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/128 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">12–13</td><td class="reg-name">Base Frequency Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/128 Hz/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              ⚠️ <strong>Write commands use TCP port 50200</strong> (not 502). Use FC16 (Write Multiple Registers). Two-word values: MSW at lower address, LSW at higher address. See SCADA manual §12 for worked examples.
+            </div>
+          </div>
+        </div>
+
+        <!-- Annunciator Quick-Reference -->
+        <div class="poll-group" id="pg-annunciator">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-annunciator')">
+            <h4>🔔 Annunciator Status Points (Port 50201) <span class="poll-badge">2–5 SEC</span></h4>
+            <div><span class="poll-count">~23 registers · Dedicated alarm points</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Severity</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">611</td><td class="reg-name">E-Stop Active</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">613</td><td class="reg-name">Overcrank (Failure to Start)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">614</td><td class="reg-name">Overspeed</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">618</td><td class="reg-name">High Coolant Temperature (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">621</td><td class="reg-name">Air Damper Shutdown</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">626</td><td class="reg-name">Low Oil Pressure (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">628</td><td class="reg-name">Low Coolant Level (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">623</td><td class="reg-name">High Battery Voltage (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">630</td><td class="reg-name">Low Fuel Level (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">612</td><td class="reg-name">Generator Not In Auto Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">615</td><td class="reg-name">EPS Supplying Load</td><td class="reg-words">1</td><td style="color:#2e7d32;font-weight:700;">🟢 Green</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">616</td><td class="reg-name">Overload / Load Shed</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">617</td><td class="reg-name">High Coolant Temp (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">619</td><td class="reg-name">Low Coolant Temp Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">620</td><td class="reg-name">Low Cranking Voltage</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">624</td><td class="reg-name">Low Battery Voltage Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">625</td><td class="reg-name">Low Oil Pressure (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">627</td><td class="reg-name">Low Coolant Level (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">629</td><td class="reg-name">Low Fuel Level (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">631</td><td class="reg-name">Battery Charger AC Failure</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">632</td><td class="reg-name">SCR SPN 4792 (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">633</td><td class="reg-name">SCR SPN 4792 (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Port 50201 registers.</strong> These are dedicated annunciator status bits — each is a simple boolean (0/1). Red = shutdown-level, Amber = warning-level, Green = informational. For custom alarm grouping, use the User Alarm Groups (regs 101–110 on port 502) instead.
+            </div>
+          </div>
+        </div>
+
+        <!-- Scaling Quick Reference -->
+        <div class="modbus-notes" style="background:#e3f2fd; border-left-color:#1565c0;">
+          <h5 style="color:#1565c0;">📐 Scaling Quick Reference</h5>
+          <ul style="columns:2; column-gap:32px;">
+            <li style="color:#333;"><strong>Voltage:</strong> raw × 1 V/bit = Volts</li>
+            <li style="color:#333;"><strong>Current:</strong> raw × 1 A/bit = Amps</li>
+            <li style="color:#333;"><strong>Frequency:</strong> raw × (1/128) = Hz</li>
+            <li style="color:#333;"><strong>Power Factor:</strong> raw × (1/16384) – 2 = PF</li>
+            <li style="color:#333;"><strong>Real Power (2-word):</strong> ((MSW≪16)|LSW) × 1 W – 2,000,000,000 = Watts</li>
+            <li style="color:#333;"><strong>Reactive Power (2-word):</strong> same as real power but VAR</li>
+            <li style="color:#333;"><strong>Apparent Power (2-word):</strong> ((MSW≪16)|LSW) × 1 VA = VA</li>
+            <li style="color:#333;"><strong>Energy (2-word):</strong> ((MSW≪16)|LSW) × 1 Wh = Wh</li>
+            <li style="color:#333;"><strong>Oil Pressure:</strong> raw × (1/128) = PSI</li>
+            <li style="color:#333;"><strong>Temperature:</strong> raw × (1/32) – 273 = °F</li>
+            <li style="color:#333;"><strong>Battery Voltage:</strong> raw × (1/20) = Volts</li>
+            <li style="color:#333;"><strong>Engine Speed:</strong> raw × 0.125 = RPM</li>
+            <li style="color:#333;"><strong>Engine Hours (2-word):</strong> ((MSW≪16)|LSW) × 0.05 = Hours</li>
+            <li style="color:#333;"><strong>Percent Load:</strong> raw × 0.4 = %</li>
+            <li style="color:#333;"><strong>Fuel Level:</strong> raw × (1/2.56) = %</li>
+          </ul>
+        </div>
+
+      </div>
+
     </div>
   </main>
 
@@ -1923,13 +2577,18 @@ function showView(viewKey) {
     hmi: 'HMI Manual – Paralleling Genset Control',
     sw: 'Software Operations Manual',
     bop: 'Balance of Plant Software Manual',
-    scada: 'SCADA Modbus Manual'
+    scada: 'SCADA Modbus Manual',
+    modbus: 'Suggested SCADA Registers — 1-Second Polling List'
   };
   document.getElementById('topbarTitle').textContent = titles[viewKey] || '';
 
   // Update topbar actions
   const actions = document.getElementById('topbarActions');
-  if (viewKey !== 'overview' && docs[viewKey]) {
+  if (viewKey === 'modbus') {
+    actions.innerHTML = `
+      <a class="btn btn-secondary" href="${pdfUrl(docs.scada.file, 24)}" target="_blank">📡 Open SCADA Manual → Register Maps</a>
+    `;
+  } else if (viewKey !== 'overview' && docs[viewKey]) {
     const doc = docs[viewKey];
     actions.innerHTML = `
       <a class="btn btn-primary" href="${pdfUrl(doc.file, 1)}" target="_blank">📄 Open Full PDF</a>
@@ -2046,6 +2705,11 @@ function highlightText(text, query) {
   if (!query) return text;
   const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
   return text.replace(regex, '<span class="highlight">$1</span>');
+}
+
+// Toggle poll group expand/collapse
+function togglePollGroup(id) {
+  document.getElementById(id).classList.toggle('collapsed');
 }
 
 // Mobile sidebar toggle
