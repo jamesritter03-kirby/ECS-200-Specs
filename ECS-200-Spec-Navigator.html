@@ -918,6 +918,97 @@
     .modbus-notes h5 { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: #856404; }
     .modbus-notes ul { padding-left: 18px; margin: 0; }
     .modbus-notes li { font-size: 0.82rem; color: #856404; line-height: 1.6; margin-bottom: 4px; }
+
+    /* Block Plan */
+    .block-plan-group { border-top: 3px solid #17a2b8; }
+    .block-plan-group .poll-group-header { background: linear-gradient(135deg, #0d6e7e 0%, #17a2b8 100%); }
+    .block-plan-group .poll-group-header:hover { background: linear-gradient(135deg, #0b5e6b 0%, #148f9e 100%); }
+    .block-sub-header {
+      padding: 12px 16px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+      background: #eef7f8;
+      border-bottom: 2px solid #17a2b8;
+    }
+    .block-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .block-table thead th {
+      background: #f8f9fa;
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    .block-table tbody tr { transition: background 0.2s; }
+    .block-table tbody tr:hover { background: #e8f8fa; }
+    .block-table tbody td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+    .block-id {
+      display: inline-block;
+      background: #17a2b8;
+      color: #fff;
+      font-family: 'SF Mono','Consolas','Menlo',monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .block-id-sm {
+      display: inline-block;
+      background: #17a2b8;
+      color: #fff;
+      font-family: 'SF Mono','Consolas','Menlo',monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .fc03-call {
+      font-family: 'SF Mono','Consolas','Menlo',monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+    }
+    .block-regs {
+      font-size: 0.75rem;
+      color: #666;
+      line-height: 1.5;
+    }
+    .block-rate {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .rate-1s { background: #ffecb3; color: #e65100; }
+    .rate-2s { background: #fff3e0; color: #bf360c; }
+    .rate-5s { background: #e8f5e9; color: #2e7d32; }
+    .rate-30s { background: #e3f2fd; color: #1565c0; }
+    .block-ref {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #e8f8fa;
+      border-top: 1px solid #b2ebf2;
+      font-size: 0.78rem;
+      color: #0d6e7e;
+    }
+    .block-ref strong { color: #0b5e6b; }
   </style>
 </head>
 <body>
@@ -1730,6 +1821,249 @@
           </ul>
         </div>
 
+        <!-- CONTIGUOUS READ BLOCK PLAN -->
+        <div class="poll-group block-plan-group" id="pg-blocks">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-blocks')">
+            <h4>📦 Contiguous Read Block Plan <span class="poll-badge" style="background:#fff;color:#17a2b8;">FC03 TRANSACTIONS</span></h4>
+            <div><span class="poll-count">17 read blocks · 3 ports · optimized for batch reads</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+
+            <!-- Port 502 — 200P — Fast -->
+            <div class="block-sub-header">🔵 Port 502 — ECS 200P (Paralleling Controller) — 1-Second Fast Poll</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">P1</span></td>
+                  <td class="fc03-call">Read(2, 4)</td>
+                  <td>4</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>2</strong> Event Lamp · <strong>3</strong> Horn · <strong>4</strong> Hard Shutdown · <strong>5</strong> Soft Shutdown</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P2</span></td>
+                  <td class="fc03-call">Read(40, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>40</strong> Battery Voltage</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P3</span></td>
+                  <td class="fc03-call">Read(101, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>101–110</strong> User Alarm Groups A through J (160 configurable alarm bits)</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P4</span></td>
+                  <td class="fc03-call">Read(150, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>150</strong> Avg V · <strong>152</strong> Avg I · <strong>155–156</strong> Real Power (2w) · <strong>157</strong> Freq · <strong>159</strong> Avg PF<br><em style="color:#999;">Regs 151, 153, 154, 158 may be unused/reserved — ignore those words</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P5</span></td>
+                  <td class="fc03-call">Read(180, 12)</td>
+                  <td>12</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>180–182</strong> V L1L2/L2L3/L3L1 · <strong>183–185</strong> V L1N/L2N/L3N · <strong>186–188</strong> I L1/L2/L3 · <strong>189–191</strong> PF L1/L2/L3</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P6</span></td>
+                  <td class="fc03-call">Read(202, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>202–203</strong> Apparent Power kVA (2w) · <strong>205–206</strong> Reactive Power kVAR (2w)<br><em style="color:#999;">Reg 204 may be unused — ignore that word</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P7</span></td>
+                  <td class="fc03-call">Read(228, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>228</strong> Genset Available · <strong>229</strong> Breaker Status · <strong>230</strong> Operating Mode · <strong>231</strong> Auto Start State · <strong>232</strong> Engine Run</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P8</span></td>
+                  <td class="fc03-call">Read(730, 9)</td>
+                  <td>9</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>730</strong> DBA State · <strong>731</strong> DBA Fail Reason · <strong>738</strong> Sync Mode<br><em style="color:#999;">Regs 732–737 contain additional paralleling state data</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P9</span></td>
+                  <td class="fc03-call">Read(750, 31) <em style="font-size:0.7rem;font-weight:400;">for 1 unit</em></td>
+                  <td>31 <em style="font-size:0.7rem;">+22/unit</em></td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>750–754</strong> Units Online/Available/EPS · <strong>756–758</strong> System kW &amp; %Load · <strong>759–780</strong> Gen #1 block<br><em style="color:#999;">For N units: Read(750, 9 + 22×N). 4 units = 97 words. 5+ units → split into two reads.</em></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>1-second total:</strong> 9 transactions · ~77 words (1 unit) — well within typical PLC/SCADA cycle budget
+            </div>
+
+            <!-- Port 502 — 200P — Slow -->
+            <div class="block-sub-header">🟢 Port 502 — ECS 200P (Paralleling Controller) — Slow Poll (5–30 s)</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">P10</span></td>
+                  <td class="fc03-call">Read(208, 13)</td>
+                  <td>13</td>
+                  <td><span class="block-rate rate-5s">5–30 s</span></td>
+                  <td class="block-regs"><strong>208–213</strong> Energy Meters: kWh+/kVARh+/kWh– (3×2w) · <strong>214–220</strong> Ratings: V/I/Hz/kW/PF</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P11</span></td>
+                  <td class="fc03-call">Read(245, 3)</td>
+                  <td>3</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>245</strong> Date · <strong>246</strong> Year · <strong>247</strong> Time</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P12</span></td>
+                  <td class="fc03-call">Read(350, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>350</strong> Primary Data Link Status</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P13</span></td>
+                  <td class="fc03-call">Read(577, 6)</td>
+                  <td>6</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>577–578</strong> 2-Wire Port A/B · <strong>579–582</strong> 4-Wire Ports #1–#4</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P14</span></td>
+                  <td class="fc03-call">Read(700, 16)</td>
+                  <td>16</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>700</strong> DI Status · <strong>701</strong> Iso DI · <strong>702</strong> DO Status · <strong>703–705</strong> AI #1–#3 · <strong>706–715</strong> AO &amp; PWM</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P15</span></td>
+                  <td class="fc03-call">Read(1465, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1465</strong> LSLD Priority · <strong>1466</strong> LSLD State · <strong>1467</strong> Desired Units · <strong>1468</strong> Add Timer · <strong>1469</strong> Remove Timer</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P16</span></td>
+                  <td class="fc03-call">Read(1737, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1737</strong> Generator Real Load Control Base Load Setpoint</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P17</span></td>
+                  <td class="fc03-call">Read(1805, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1805</strong> Generator Real Load Control State</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Port 502 — 200G — Engine -->
+            <div class="block-sub-header">🟠 Port 502 — ECS 200G (Genset Controller) — Engine Sensor Data</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">G1</span></td>
+                  <td class="fc03-call">Read(41, 9)</td>
+                  <td>9</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>41</strong> Oil Pressure · <strong>42</strong> Coolant Temp · <strong>43</strong> Fuel Level · <strong>46</strong> Intake Air Temp · <strong>49</strong> Turbo Boost<br><em style="color:#999;">Regs 44–45, 47–48 contain filter / other engine data — safe to read</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">G2</span></td>
+                  <td class="fc03-call">Read(57, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>57–58</strong> Exhaust Temps L/R · <strong>59</strong> Oil Temp · <strong>62</strong> Fuel Rate · <strong>65–66</strong> Engine Hours (2w)<br><em style="color:#999;">Regs 60–61, 63–64 contain aftercooler / filter data — safe to read</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">G3</span></td>
+                  <td class="fc03-call">Read(154, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>154</strong> Engine Speed (RPM)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>Engine total:</strong> 3 transactions · 20 words — sent to the 200G genset controller IP address
+            </div>
+
+            <!-- Port 50201 — Status -->
+            <div class="block-sub-header">🟣 Port 50201 — ECS 200P — Module Status &amp; Annunciator</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">S1</span></td>
+                  <td class="fc03-call">Read(1, 2)</td>
+                  <td>2</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>1</strong> Paralleling Controller Online · <strong>2</strong> Engine ECM Online</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">S2</span></td>
+                  <td class="fc03-call">Read(16, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>16</strong> Number of Active Events — Genset Controller</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">S3</span></td>
+                  <td class="fc03-call">Read(611, 23)</td>
+                  <td>23</td>
+                  <td><span class="block-rate rate-2s">2–5 s</span></td>
+                  <td class="block-regs"><strong>611–633</strong> All annunciator points: E-Stop, Overcrank, Overspeed, Coolant, Oil, Battery, Fuel, SCR, Load Shed…</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>Port 50201 total:</strong> 3 transactions · 26 words
+            </div>
+
+            <!-- Grand Total -->
+            <div style="padding:16px 20px; background:linear-gradient(135deg,#e0f7fa 0%,#f0fafe 100%); border-top:2px solid #17a2b8;">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">15</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total FC03 Transactions (1 unit)</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">~123</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total Words @ 1-Second Cycle</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">~169</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total Words Including Slow Poll</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">3</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">TCP Connections (502, 50200, 50201)</div>
+                </div>
+              </div>
+              <div style="margin-top:12px; font-size:0.78rem; color:#555; text-align:center;">All blocks use FC03 (Read Holding Registers). Each block is a single Modbus transaction. Unused registers within a contiguous range are read but ignored by your application.</div>
+            </div>
+          </div>
+        </div>
+
         <!-- GROUP 1: Generator AC Electrical -->
         <div class="poll-group" id="pg-gen-ac">
           <div class="poll-group-header" onclick="togglePollGroup('pg-gen-ac')">
@@ -1760,6 +2094,11 @@
                 <tr><td class="reg-num">191</td><td class="reg-name">Power Factor L3</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P4</span> Read(150, 10) — averages + power + freq + PF &nbsp;·&nbsp;
+              <span class="block-id-sm">P5</span> Read(180, 12) — all per-phase data
+            </div>
           </div>
         </div>
 
@@ -1780,6 +2119,11 @@
                 <tr><td class="reg-num">202–203</td><td class="reg-name">Apparent Power (kVA)</td><td class="reg-words">2</td><td class="reg-scaling">1 VA/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P4</span> Read(150, 10) — includes Real Power at 155–156 &nbsp;·&nbsp;
+              <span class="block-id-sm">P6</span> Read(202, 5) — Apparent + Reactive power
+            </div>
           </div>
         </div>
 
@@ -1806,6 +2150,12 @@
                 <tr><td class="reg-num">40</td><td class="reg-name">Battery Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1/20 V/bit, 0 offset (0–3276 V)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P2</span> Read(40, 1) — battery &nbsp;·&nbsp;
+              <span class="block-id-sm">P7</span> Read(228, 5) — genset available through engine run &nbsp;·&nbsp;
+              <span class="block-id-sm">P8</span> Read(730, 9) — DBA + sync mode
+            </div>
           </div>
         </div>
 
@@ -1834,6 +2184,12 @@
                 <tr><td class="reg-num">62</td><td class="reg-name">Fuel Consumption Rate</td><td class="reg-words">1</td><td class="reg-scaling">0.05 L/hr per bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',47)">§7.10 p.47</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks (200G controller IP):</strong>
+              <span class="block-id-sm">G1</span> Read(41, 9) — oil/coolant/fuel/intake/turbo &nbsp;·&nbsp;
+              <span class="block-id-sm">G2</span> Read(57, 10) — exhaust/oil temp/fuel rate/hours &nbsp;·&nbsp;
+              <span class="block-id-sm">G3</span> Read(154, 1) — engine speed
+            </div>
           </div>
         </div>
 
@@ -1859,6 +2215,11 @@
                 <tr><td class="reg-num">5</td><td class="reg-name">Soft Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">Boolean active/inactive</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P1</span> Read(2, 4) — lamp/horn/shutdown &nbsp;·&nbsp;
+              <span class="block-id-sm">P3</span> Read(101, 10) — all alarm groups in one read
+            </div>
             <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
               💡 <strong>Tip:</strong> Configure User Alarm Groups A–J in Cat ET to map your most critical SPN-FMI events into bit-packed words. This lets you monitor up to 160 alarms with just 10 register reads — far more efficient than polling individual event logs.
             </div>
@@ -1893,6 +2254,13 @@
                 <tr><td class="reg-num">1469</td><td class="reg-name">LSLD Remove Timer Remaining</td><td class="reg-words">1</td><td class="reg-scaling">1 s/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P9</span> Read(750, 31) — system totals 750–758 &nbsp;·&nbsp;
+              <span class="block-id-sm">P15</span> Read(1465, 5) — LSLD state &amp; timers &nbsp;·&nbsp;
+              <span class="block-id-sm">P16</span> Read(1737, 1) &nbsp;·&nbsp;
+              <span class="block-id-sm">P17</span> Read(1805, 1)
+            </div>
           </div>
         </div>
 
@@ -1922,6 +2290,10 @@
                 <tr><td class="reg-num">780</td><td class="reg-name">Gen #1 — % Rated kW Load</td><td class="reg-words">1</td><td class="reg-scaling">0.4 %/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P9</span> Read(750, 9 + 22×N) — entire system + per-unit data in one transaction per ≤5 units
+            </div>
             <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
               💡 <strong>Block read pattern:</strong> Gen #1 = regs 759–780 (22 words). Gen #2 starts at 781. Gen #N starts at 759 + (N–1) × 22. Supports up to 32 units. Read the entire block for all online units in one or two transactions.
             </div>
@@ -1948,6 +2320,10 @@
                 <tr><td class="reg-num">220</td><td class="reg-name">Rated Power Factor</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P10</span> Read(208, 13) — energy meters (208–213) + ratings (214–220) in one contiguous read
+            </div>
           </div>
         </div>
 
@@ -1968,6 +2344,10 @@
                 <tr><td class="reg-num">212–213</td><td class="reg-name">kWh (Negative Real Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 Wh/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P10</span> Read(208, 13) — shares a block with ratings (214–220)
+            </div>
           </div>
         </div>
 
@@ -1996,6 +2376,10 @@
                 <tr><td class="reg-num">714–715</td><td class="reg-name">Onboard PWM Output #3 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P14</span> Read(700, 16) — all onboard DI/DO/AI/AO/PWM in one read
+            </div>
           </div>
         </div>
 
@@ -2026,6 +2410,13 @@
                 <tr><td class="reg-num">2</td><td class="reg-name">Active Events Count — Paralleling Ctrl</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset (Port 50201)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',55)">§8.6 p.55</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P12</span> Read(350, 1) &nbsp;·&nbsp;
+              <span class="block-id-sm">P13</span> Read(577, 6) &nbsp;·&nbsp;
+              Port 50201: <span class="block-id-sm">S1</span> Read(1, 2) &nbsp;·&nbsp;
+              <span class="block-id-sm">S2</span> Read(16, 1)
+            </div>
           </div>
         </div>
 
@@ -2046,6 +2437,10 @@
                 <tr><td class="reg-num">247</td><td class="reg-name">Time (HH:MM:SS packed)</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P11</span> Read(245, 3) — date, year, and time in one read
+            </div>
           </div>
         </div>
 
@@ -2115,6 +2510,10 @@
                 <tr><td class="reg-num">633</td><td class="reg-name">SCR SPN 4792 (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
               </tbody>
             </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">S3</span> Read(611, 23) — all 23 annunciator points in one contiguous read on port 50201
+            </div>
             <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
               💡 <strong>Port 50201 registers.</strong> These are dedicated annunciator status bits — each is a simple boolean (0/1). Red = shutdown-level, Amber = warning-level, Green = informational. For custom alarm grouping, use the User Alarm Groups (regs 101–110 on port 502) instead.
             </div>
