@@ -566,60 +566,83 @@ p50201_status = [
 
 
 # ---------------------------------------------------------------------------
-# Generate workbook
+# Helper: add change history sheet to a workbook
 # ---------------------------------------------------------------------------
-def main():
-    wb = openpyxl.Workbook()
-    # Remove default sheet
-    wb.remove(wb.active)
-
-    add_sheet(wb, "200P — Port 502 Fast",
-              "ECS 200 Paralleling (200P)", "502",
-              "READ Registers — 1-Second Fast Poll",
-              p502_fast)
-
-    add_sheet(wb, "200P — Port 502 Slow",
-              "ECS 200 Paralleling (200P)", "502",
-              "READ Registers — 5–30 Second Slow Poll",
-              p502_slow)
-
-    add_sheet(wb, "200G — Port 502 Engine",
-              "ECS 200 Genset (200G)", "502",
-              "READ Registers — Engine Sensor Data",
-              g502_engine)
-
-    add_sheet(wb, "200P — Port 50200 Write",
-              "ECS 200 Paralleling (200P)", "50200",
-              "WRITE Registers — Commands & Setpoints (FC16)",
-              p50200_write)
-
-    add_sheet(wb, "200P — Port 50201 Status",
-              "ECS 200 Paralleling (200P)", "50201",
-              "READ Registers — Module Status & Annunciator",
-              p50201_status)
-
-    # Change History sheet
-    ws_hist = wb.create_sheet(title="Change History")
-    ws_hist.column_dimensions["A"].width = 12
-    ws_hist.column_dimensions["B"].width = 80
-    ws_hist.column_dimensions["C"].width = 30
+def add_change_history(wb):
+    ws = wb.create_sheet(title="Change History")
+    ws.column_dimensions["A"].width = 12
+    ws.column_dimensions["B"].width = 80
+    ws.column_dimensions["C"].width = 30
     for i, h in enumerate(["Version", "Change History", "Notes"], 1):
-        c = ws_hist.cell(row=1, column=i, value=h)
+        c = ws.cell(row=1, column=i, value=h)
         c.font = header_font
         c.fill = header_fill
         c.alignment = center
         c.border = thin_border
-    ws_hist.cell(row=2, column=1, value="v1.0").border = thin_border
-    ws_hist.cell(row=2, column=2, value="Initial recommended register list — curated from LEBE23522-00 SCADA Manual").border = thin_border
-    ws_hist.cell(row=2, column=3, value="ECS 200 v1.1 register list").border = thin_border
-    ws_hist.sheet_properties.tabColor = "888888"
+    ws.cell(row=2, column=1, value="v1.0").border = thin_border
+    ws.cell(row=2, column=2, value="Initial recommended register list — curated from LEBE23522-00 SCADA Manual").border = thin_border
+    ws.cell(row=2, column=3, value="ECS 200 v1.1 register list").border = thin_border
+    ws.sheet_properties.tabColor = "888888"
 
-    out = "ECS 200 Recommended SCADA Registers.xlsx"
-    wb.save(out)
-    print(f"Generated: {out}")
-    print(f"Sheets: {wb.sheetnames}")
-    for sn in wb.sheetnames:
-        print(f"  {sn}: {wb[sn].max_row} rows")
+
+def generate_workbook(filename, sheet_name, device_label, port_number, port_note, sections):
+    """Generate a single-sheet workbook for one device/port combination."""
+    wb = openpyxl.Workbook()
+    wb.remove(wb.active)
+    add_sheet(wb, sheet_name, device_label, port_number, port_note, sections)
+    add_change_history(wb)
+    wb.save(filename)
+    rows = wb[sheet_name].max_row
+    print(f"  ✓ {filename}  ({rows} rows)")
+    return filename
+
+
+# ---------------------------------------------------------------------------
+# Generate one spreadsheet per device + port combination
+# ---------------------------------------------------------------------------
+def main():
+    print("Generating individual SCADA register spreadsheets...\n")
+
+    files = []
+
+    files.append(generate_workbook(
+        "ECS 200P Port 502 Fast Read.xlsx",
+        "SCADA_Read",
+        "ECS 200 Paralleling (200P)", "502",
+        "READ Registers — 1-Second Fast Poll",
+        p502_fast))
+
+    files.append(generate_workbook(
+        "ECS 200P Port 502 Slow Read.xlsx",
+        "SCADA_Read",
+        "ECS 200 Paralleling (200P)", "502",
+        "READ Registers — 5–30 Second Slow Poll",
+        p502_slow))
+
+    files.append(generate_workbook(
+        "ECS 200G Port 502 Engine Read.xlsx",
+        "SCADA_Read",
+        "ECS 200 Genset (200G)", "502",
+        "READ Registers — Engine Sensor Data",
+        g502_engine))
+
+    files.append(generate_workbook(
+        "ECS 200P Port 50200 Write.xlsx",
+        "SCADA_Write",
+        "ECS 200 Paralleling (200P)", "50200",
+        "WRITE Registers — Commands & Setpoints (FC16)",
+        p50200_write))
+
+    files.append(generate_workbook(
+        "ECS 200P Port 50201 Status.xlsx",
+        "SCADA_Read",
+        "ECS 200 Paralleling (200P)", "50201",
+        "READ Registers — Module Status & Annunciator",
+        p50201_status))
+
+    print(f"\nDone — {len(files)} spreadsheets generated.")
+    for f in files:
+        print(f"  📄 {f}")
 
 
 if __name__ == "__main__":
