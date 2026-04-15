@@ -908,6 +908,74 @@
     .poll-summary-card .ps-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
     .poll-summary-card .ps-detail { font-size: 0.78rem; color: #555; margin-top: 6px; }
 
+    /* Download section */
+    .download-section {
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #c8e6c9;
+    }
+    .download-section h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .download-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fff;
+      padding: 16px 18px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      text-decoration: none;
+      color: var(--cat-black);
+      transition: all 0.2s;
+      border: 1px solid #e0e0e0;
+    }
+    .download-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      border-color: var(--cat-yellow);
+    }
+    .download-card .dl-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    .download-card .dl-info h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin: 0 0 4px;
+      color: var(--cat-black);
+    }
+    .download-card .dl-info p {
+      font-size: 0.75rem;
+      margin: 0;
+      color: #666;
+      line-height: 1.4;
+    }
+    .download-card .dl-badge {
+      margin-left: auto;
+      background: var(--cat-yellow);
+      color: var(--cat-black);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
     .modbus-notes {
       background: #fff3cd;
       border-radius: 10px;
@@ -1782,6 +1850,29 @@
               <div class="conn-value">Big-Endian</div>
               <div class="conn-note">MSW at lower address</div>
             </div>
+          </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section">
+          <h4>📥 Download Recommended Register Spreadsheets</h4>
+          <div class="download-grid">
+            <a href="ECS 200 Recommended SCADA Registers.xlsx" download class="download-card">
+              <span class="dl-icon">📊</span>
+              <div class="dl-info">
+                <h5>Full Register Workbook</h5>
+                <p>All 5 sheets — 200P Fast/Slow, 200G Engine, Write Cmds, Status/Annunciator</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="CAT ECS 200 SCADA Genset READ v1.1.xlsx" download class="download-card">
+              <span class="dl-icon">📋</span>
+              <div class="dl-info">
+                <h5>Original Template (Reference)</h5>
+                <p>Cat® full register list template — all 545 registers, original Cat format</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
           </div>
         </div>
 
