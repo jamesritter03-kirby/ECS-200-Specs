@@ -581,6 +581,13 @@ function toggleSidebar() {
 
 // Initialize (inside TB onInit)
     Object.keys(docs).forEach(renderSections);
+
+    // Expose functions to global scope for inline onclick handlers
+    window.showView = showView;
+    window.toggleSidebar = toggleSidebar;
+    window.togglePollGroup = togglePollGroup;
+    window.openPdfAt = openPdfAt;
+    window.handleSearch = handleSearch;
 };
 
 self.onDestroy = function() {};
