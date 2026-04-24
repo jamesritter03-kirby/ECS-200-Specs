@@ -373,8 +373,7 @@ const docs = {
   }
 };
 
-// Current view
-let currentView = 'overview';
+// Current view (declared above)
 
 // Build PDF URL with page number
 function pdfUrl(file, page) {
