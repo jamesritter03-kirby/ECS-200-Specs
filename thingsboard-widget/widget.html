@@ -1,225 +1,1607 @@
-<div class="ecs200-widget">
-  <!-- Tab Navigation -->
-  <div class="ecs-tabs">
-    <button class="ecs-tab active" data-tab="overview">📋 Overview</button>
-    <button class="ecs-tab" data-tab="blocks">📦 Read Blocks</button>
-    <button class="ecs-tab" data-tab="registers">📊 Register Map</button>
-    <button class="ecs-tab" data-tab="practices">⚡ Best Practices</button>
-  </div>
+<div class="ecs200-full-widget">
+<button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
 
-  <!-- OVERVIEW TAB -->
-  <div class="ecs-panel active" id="tab-overview">
-    <div class="ecs-conn-grid">
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Read Port</div>
-        <div class="ecs-conn-value">TCP 502</div>
-        <div class="ecs-conn-note">Modbus TCP — Read registers (FC03)</div>
-      </div>
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Write Port</div>
-        <div class="ecs-conn-value">TCP 50200</div>
-        <div class="ecs-conn-note">Commands &amp; setpoints (FC16)</div>
-      </div>
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Status Port</div>
-        <div class="ecs-conn-value">TCP 50201</div>
-        <div class="ecs-conn-note">Events, annunciator, module status</div>
-      </div>
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Function Codes</div>
-        <div class="ecs-conn-value">03 / 16</div>
-        <div class="ecs-conn-note">Read Holding / Write Multiple</div>
-      </div>
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Max per Read</div>
-        <div class="ecs-conn-value">125 regs</div>
-        <div class="ecs-conn-note">Per single FC03 transaction</div>
-      </div>
-      <div class="ecs-conn-box">
-        <div class="ecs-conn-label">Byte Order</div>
-        <div class="ecs-conn-value">Big-Endian</div>
-        <div class="ecs-conn-note">MSW at lower address</div>
-      </div>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>Cat® ECS 200</h1>
+      <div class="subtitle">Specification Navigator</div>
     </div>
-
-    <div class="ecs-poll-cards">
-      <div class="ecs-poll-card">
-        <div class="ecs-pc-rate">1 s</div>
-        <div class="ecs-pc-label">Critical Real-Time</div>
-        <div class="ecs-pc-detail">AC power, V, I, Hz, breaker, state</div>
-      </div>
-      <div class="ecs-poll-card">
-        <div class="ecs-pc-rate">1 s</div>
-        <div class="ecs-pc-label">Engine &amp; Protection</div>
-        <div class="ecs-pc-detail">Oil psi, coolant °F, battery, alarms</div>
-      </div>
-      <div class="ecs-poll-card">
-        <div class="ecs-pc-rate">1–2 s</div>
-        <div class="ecs-pc-label">Paralleling / Load Mgmt</div>
-        <div class="ecs-pc-detail">DBA, sync, load share, LSLD</div>
-      </div>
-      <div class="ecs-poll-card">
-        <div class="ecs-pc-rate">5–30 s</div>
-        <div class="ecs-pc-label">Slow-Changing Data</div>
-        <div class="ecs-pc-detail">Energy, hours, I/O, network, clock</div>
-      </div>
+    <div class="sidebar-search">
+      <input type="text" id="globalSearch" placeholder="Search all documents..." oninput="handleSearch(this.value)">
     </div>
-
-    <div class="ecs-scaling-ref">
-      <h4>🔢 Common Scaling Reference</h4>
-      <table class="ecs-ref-table">
-        <thead><tr><th>Measurement</th><th>Scale</th><th>Offset</th><th>Formula</th></tr></thead>
-        <tbody>
-          <tr><td>Voltage (V)</td><td>1 V/bit</td><td>0</td><td>raw × 1</td></tr>
-          <tr><td>Current (A)</td><td>1 A/bit</td><td>0</td><td>raw × 1</td></tr>
-          <tr><td>Frequency (Hz)</td><td>1/128 Hz/bit</td><td>0</td><td>raw ÷ 128</td></tr>
-          <tr><td>Power Factor</td><td>1/16384 /bit</td><td>−2</td><td>(raw ÷ 16384) − 2</td></tr>
-          <tr><td>Real Power (W)</td><td>1 W/bit (32-bit)</td><td>−2 000 000 000</td><td>((MSW≪16)|LSW) − 2B</td></tr>
-          <tr><td>Oil Pressure (psi)</td><td>1/128 psi/bit</td><td>0</td><td>raw ÷ 128</td></tr>
-          <tr><td>Temperature (°F)</td><td>1/32 °F/bit</td><td>−273</td><td>(raw ÷ 32) − 273</td></tr>
-          <tr><td>Engine Speed (rpm)</td><td>0.125 rpm/bit</td><td>0</td><td>raw × 0.125</td></tr>
-          <tr><td>Fuel Level (%)</td><td>1/2.56 %/bit</td><td>0</td><td>raw ÷ 2.56</td></tr>
-          <tr><td>Fuel Rate (L/hr)</td><td>0.05 L/hr/bit</td><td>0</td><td>raw × 0.05</td></tr>
-          <tr><td>Engine Hours</td><td>0.05 hr/bit (32-bit)</td><td>0</td><td>((MSW≪16)|LSW) × 0.05</td></tr>
-          <tr><td>Energy (Wh)</td><td>1 Wh/bit (32-bit)</td><td>0</td><td>((MSW≪16)|LSW) × 1</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- BLOCK PLAN TAB -->
-  <div class="ecs-panel" id="tab-blocks">
-    <div class="ecs-block-section">
-      <h4 class="ecs-bsec-title" style="border-color:#2196F3;">🔵 Port 502 — 200P — Fast (1 s)</h4>
-      <table class="ecs-block-table">
-        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ecs-bid">P1</span></td><td>Read(2, 4)</td><td>4</td><td><b>2</b> Event Lamp · <b>3</b> Horn · <b>4</b> Hard SD · <b>5</b> Soft SD</td></tr>
-          <tr><td><span class="ecs-bid">P2</span></td><td>Read(40, 1)</td><td>1</td><td><b>40</b> Battery Voltage</td></tr>
-          <tr><td><span class="ecs-bid">P3</span></td><td>Read(101, 10)</td><td>10</td><td><b>101–110</b> User Alarm Groups A–J (160 alarm bits)</td></tr>
-          <tr><td><span class="ecs-bid">P4</span></td><td>Read(150, 10)</td><td>10</td><td><b>150</b> Avg V · <b>152</b> Avg I · <b>155–156</b> kW (2w) · <b>157</b> Hz · <b>159</b> PF</td></tr>
-          <tr><td><span class="ecs-bid">P5</span></td><td>Read(180, 12)</td><td>12</td><td><b>180–182</b> V LL · <b>183–185</b> V LN · <b>186–188</b> I · <b>189–191</b> PF per phase</td></tr>
-          <tr><td><span class="ecs-bid">P6</span></td><td>Read(202, 5)</td><td>5</td><td><b>202–203</b> kVA (2w) · <b>205–206</b> kVAR (2w)</td></tr>
-          <tr><td><span class="ecs-bid">P7</span></td><td>Read(228, 5)</td><td>5</td><td><b>228</b> Avail · <b>229</b> Bkr · <b>230</b> Mode · <b>231</b> Start · <b>232</b> Run</td></tr>
-          <tr><td><span class="ecs-bid">P8</span></td><td>Read(730, 9)</td><td>9</td><td><b>730</b> DBA State · <b>731</b> DBA Fail · <b>738</b> Sync Mode</td></tr>
-          <tr><td><span class="ecs-bid">P9</span></td><td>Read(750, 31)</td><td>31+</td><td><b>750–754</b> Online/Avail · <b>756–758</b> Sys kW/% · <b>759–780</b> Gen #1 block</td></tr>
-        </tbody>
-      </table>
-      <div class="ecs-block-summary">✅ 9 transactions · ~77 words (1 unit) — fits in 1-second cycle</div>
-    </div>
-
-    <div class="ecs-block-section">
-      <h4 class="ecs-bsec-title" style="border-color:#4CAF50;">🟢 Port 502 — 200P — Slow (5–30 s)</h4>
-      <table class="ecs-block-table">
-        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ecs-bid">P10</span></td><td>Read(208, 13)</td><td>13</td><td><b>208–213</b> Energy kWh/kVARh (3×2w) · <b>214–220</b> Ratings V/I/Hz/kW/PF</td></tr>
-          <tr><td><span class="ecs-bid">P11</span></td><td>Read(245, 3)</td><td>3</td><td><b>245</b> Date · <b>246</b> Year · <b>247</b> Time</td></tr>
-          <tr><td><span class="ecs-bid">P12</span></td><td>Read(350, 1)</td><td>1</td><td><b>350</b> Data Link Status</td></tr>
-          <tr><td><span class="ecs-bid">P13</span></td><td>Read(577, 6)</td><td>6</td><td><b>577–582</b> Ethernet Port Status (2-wire + 4-wire)</td></tr>
-          <tr><td><span class="ecs-bid">P14</span></td><td>Read(700, 16)</td><td>16</td><td><b>700–701</b> DI · <b>702</b> DO · <b>703–715</b> AI/AO/PWM</td></tr>
-          <tr><td><span class="ecs-bid">P15</span></td><td>Read(1465, 5)</td><td>5</td><td><b>1465</b> LSLD Priority · <b>1466</b> LSLD State · <b>1467–1469</b> Timers</td></tr>
-          <tr><td><span class="ecs-bid">P16</span></td><td>Read(1737, 1)</td><td>1</td><td><b>1737</b> Base Load Setpoint</td></tr>
-          <tr><td><span class="ecs-bid">P17</span></td><td>Read(1805, 1)</td><td>1</td><td><b>1805</b> Load Control State</td></tr>
-        </tbody>
-      </table>
-      <div class="ecs-block-summary">✅ 8 transactions · 46 words — poll every 5–30 seconds</div>
-    </div>
-
-    <div class="ecs-block-section">
-      <h4 class="ecs-bsec-title" style="border-color:#FF9800;">🟠 Port 502 — 200G (Genset/Engine)</h4>
-      <table class="ecs-block-table">
-        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ecs-bid">G1</span></td><td>Read(41, 9)</td><td>9</td><td><b>41</b> Oil psi · <b>42</b> Coolant °F · <b>43</b> Fuel% · <b>44</b> Coolant Lvl · <b>49</b> Turbo</td></tr>
-          <tr><td><span class="ecs-bid">G2</span></td><td>Read(57, 10)</td><td>10</td><td><b>57–58</b> Exhaust L/R · <b>59</b> Oil °F · <b>62</b> Fuel Rate · <b>65–66</b> Hours (2w)</td></tr>
-          <tr><td><span class="ecs-bid">G3</span></td><td>Read(154, 1)</td><td>1</td><td><b>154</b> Engine RPM</td></tr>
-        </tbody>
-      </table>
-      <div class="ecs-block-summary">✅ 3 transactions · 20 words — poll every 1 second</div>
-    </div>
-
-    <div class="ecs-block-section">
-      <h4 class="ecs-bsec-title" style="border-color:#E91E63;">🔴 Port 50201 — Status &amp; Annunciator</h4>
-      <table class="ecs-block-table">
-        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ecs-bid">S1</span></td><td>Read(1, 2)</td><td>2</td><td><b>1</b> Controller Online · <b>2</b> ECM Online</td></tr>
-          <tr><td><span class="ecs-bid">S2</span></td><td>Read(16, 1)</td><td>1</td><td><b>16</b> Active Event Count</td></tr>
-          <tr><td><span class="ecs-bid">S3</span></td><td>Read(611, 23)</td><td>23</td><td><b>611</b> E-Stop · <b>613</b> Overcrank · <b>614</b> Overspeed · <b>617–618</b> Coolant Hi · <b>625–626</b> Oil Lo · etc.</td></tr>
-        </tbody>
-      </table>
-      <div class="ecs-block-summary">✅ 3 transactions · 26 words — poll every 1–2 seconds</div>
-    </div>
-  </div>
-
-  <!-- REGISTER MAP TAB -->
-  <div class="ecs-panel" id="tab-registers">
-    <div class="ecs-search-box">
-      <input type="text" class="ecs-search" placeholder="🔍 Filter registers by name, number, or description...">
-    </div>
-    <div class="ecs-reg-groups" id="ecs-reg-container"></div>
-  </div>
-
-  <!-- BEST PRACTICES TAB -->
-  <div class="ecs-panel" id="tab-practices">
-    <div class="ecs-practice-list">
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">📦</div>
-        <div>
-          <h5>Batch Reads</h5>
-          <p>Read contiguous register blocks in a single FC03 transaction (up to 125 registers). The block plan tab defines all optimized read groups.</p>
+    <div class="doc-list" id="docList">
+      <div class="doc-item active" data-doc="overview" onclick="showView('overview')">
+        <div class="doc-icon">📊</div>
+        <div class="doc-info">
+          <h3>Overview Dashboard</h3>
+          <div class="doc-id">All Documents Summary</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">⏱</div>
-        <div>
-          <h5>Data Prioritization</h5>
-          <p>Poll critical registers (power, breaker, alarms) every 1 s. Slow-changing data (energy, hours, I/O) every 5–30 s. Use User Alarm Groups (regs 101–110) for event-driven alerting.</p>
+      <div class="doc-item" data-doc="hw" onclick="showView('hw')">
+        <div class="doc-icon">🔧</div>
+        <div class="doc-info">
+          <h3>Controller Hardware Manual</h3>
+          <div class="doc-id">LEBE20713-01</div>
+          <div class="doc-pages">29 pages</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">🔗</div>
-        <div>
-          <h5>Persistent Connections</h5>
-          <p>Keep TCP connections open. Do not create a new socket per transaction. ThingsBoard Modbus connector handles this automatically.</p>
+      <div class="doc-item" data-doc="hmi" onclick="showView('hmi')">
+        <div class="doc-icon">🖥️</div>
+        <div class="doc-info">
+          <h3>HMI Manual</h3>
+          <div class="doc-id">LEBE20715-02</div>
+          <div class="doc-pages">280 pages</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">🔄</div>
-        <div>
-          <h5>Retry with Limits</h5>
-          <p>Implement retries for failed reads. Limit to 2–3 attempts with 1000–3000 ms timeouts. Mark stale data if all retries fail.</p>
+      <div class="doc-item" data-doc="sw" onclick="showView('sw')">
+        <div class="doc-icon">⚙️</div>
+        <div class="doc-info">
+          <h3>Software Operations Manual</h3>
+          <div class="doc-id">LEBE20716-02</div>
+          <div class="doc-pages">420 pages</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">📐</div>
-        <div>
-          <h5>Two-Word (32-bit) Registers</h5>
-          <p>Power and energy registers are 32-bit (2 words). MSW is at the lower address. Combine as: <code>value = (MSW &lt;&lt; 16) | LSW</code>, then apply scaling and offset.</p>
+      <div class="doc-item" data-doc="bop" onclick="showView('bop')">
+        <div class="doc-icon">🏭</div>
+        <div class="doc-info">
+          <h3>BOP Software Manual</h3>
+          <div class="doc-id">LEBE20720-00</div>
+          <div class="doc-pages">159 pages</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">🔧</div>
-        <div>
-          <h5>ThingsBoard Modbus Connector Config</h5>
-          <p>In <code>tb-gateway</code> Modbus connector, use <code>"type": "holding"</code>, <code>"functionCode": 3</code>. For 32-bit: set <code>"objectsCount": 2</code> and <code>"byteOrder": "BIG"</code>. Map each register to a telemetry key matching the block plan above.</p>
+      <div class="doc-item" data-doc="scada" onclick="showView('scada')">
+        <div class="doc-icon">📡</div>
+        <div class="doc-info">
+          <h3>SCADA Modbus Manual</h3>
+          <div class="doc-id">LEBE23522-00</div>
+          <div class="doc-pages">91 pages</div>
         </div>
       </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">🏷</div>
-        <div>
-          <h5>Suggested Telemetry Key Names</h5>
-          <p>Use consistent keys for dashboard binding: <code>gen_avg_voltage</code>, <code>gen_avg_current</code>, <code>gen_frequency</code>, <code>gen_real_power_kw</code>, <code>gen_pf</code>, <code>engine_speed_rpm</code>, <code>oil_pressure_psi</code>, <code>coolant_temp_f</code>, <code>fuel_level_pct</code>, <code>breaker_status</code>, <code>operating_mode</code>, <code>engine_hours</code>.</p>
-        </div>
-      </div>
-      <div class="ecs-practice">
-        <div class="ecs-p-icon">⚠️</div>
-        <div>
-          <h5>Write Operations (Port 50200)</h5>
-          <p>Use FC16 (Write Multiple Registers) on port 50200. NEVER enable write access without proper authentication and operator-level permissions. Write commands include alarm acknowledge, mode control, start/stop, and setpoint adjustments.</p>
+      <div style="border-top:1px solid var(--cat-gray);margin:8px 0;"></div>
+      <div class="doc-item" data-doc="modbus" onclick="showView('modbus')">
+        <div class="doc-icon" style="background:#17a2b8;color:#fff;">📋</div>
+        <div class="doc-info">
+          <h3>Suggested SCADA Registers</h3>
+          <div class="doc-id">1-Second Polling List</div>
+          <div class="doc-pages" style="color:#17a2b8;">Curated from SCADA Manual</div>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <h2 id="topbarTitle">Overview Dashboard</h2>
+      <div class="topbar-actions" id="topbarActions">
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Search results overlay -->
+      <div class="quick-find-results" id="searchResults">
+        <h3>🔍 Search Results <span id="resultCount"></span></h3>
+        <div id="resultsList"></div>
+      </div>
+
+      <!-- OVERVIEW VIEW -->
+      <div class="doc-detail active" id="view-overview">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#fff3cd;color:#856404;">📄</div>
+            <div class="stat-info">
+              <h4>Total Documents</h4>
+              <div class="stat-value">5</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#d4edda;color:#155724;">📖</div>
+            <div class="stat-info">
+              <h4>Total Pages</h4>
+              <div class="stat-value">979</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#cce5ff;color:#004085;">📑</div>
+            <div class="stat-info">
+              <h4>Major Sections</h4>
+              <div class="stat-value">65+</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#f8d7da;color:#721c24;">©️</div>
+            <div class="stat-info">
+              <h4>Caterpillar</h4>
+              <div class="stat-value">2024–25</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Overview -->
+        <div class="overview-intro">
+          <h3>Cat® Energy Control System (ECS) 200 – Documentation Suite</h3>
+          <p>The Cat® ECS 200 is a paralleling generator set controller designed for multi-unit power systems in island and utility paralleling applications. Built on a single, versatile hardware platform, it supports a broad range of genset control scenarios — from standalone emergency power to complex multi-generator paralleling switchgear with automatic load management. The system is configured and monitored through a dedicated touchscreen HMI, the Cat Electronic Technician (ET) service tool, and remote SCADA (Modbus TCP/IP) connections.</p>
+          <p style="margin-top:10px;">This documentation suite comprises <strong>5 specification manuals totaling 979 pages</strong>, covering the controller hardware, HMI operator interface, core paralleling genset software, Balance of Plant (BOP) ancillary controls for CHP/container applications, and the SCADA Modbus data interface. Together they define the complete system from physical installation through software configuration to remote supervisory integration.</p>
+        </div>
+
+        <div class="overview-section">
+          <h3>Document Library — Detailed Summaries</h3>
+
+          <!-- ==================== HARDWARE ==================== -->
+          <div class="doc-overview-card" onclick="showView('hw')">
+            <div class="doc-id-badge">LEBE20713-01 · 29 pages · ©2024</div>
+            <h4>🔧 Controller Hardware Manual</h4>
+            <p class="summary-lead">Defines the physical hardware platform shared by both the ECS 100 and ECS 200 product lines. The controller is a single-board module whose functionality is determined entirely by the loaded application software. This manual focuses exclusively on the electrical and mechanical specifications — software behaviour is covered in separate documents.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Physical Specifications</h5>
+                <table class="spec-table">
+                  <tr><td>Dimensions</td><td>286 × 200 × 51 mm (81 mm with tallest connector)</td></tr>
+                  <tr><td>Operating Temp</td><td>–40 °C to +70 °C</td></tr>
+                  <tr><td>Max Surrounding</td><td>50 °C</td></tr>
+                  <tr><td>Ingress Protection</td><td>IP20 (packaged controller)</td></tr>
+                </table>
+              </div>
+              <div class="detail-block">
+                <h5>Communication Interfaces</h5>
+                <ul>
+                  <li>4 × 4-wire Ethernet ports (10/100 Mbps)</li>
+                  <li>2 × 2-wire Ethernet ports (SPE / 10BASE-T1L)</li>
+                  <li>1 × Primary CAN bus port</li>
+                  <li>1 × Accessory CAN bus port</li>
+                  <li>1 × RS-485 serial port</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Signal Inputs</h5>
+                <ul>
+                  <li>12 × Discrete digital inputs</li>
+                  <li>1 × Isolated digital input</li>
+                  <li>3 × Analog inputs (resistive or voltage mode, shared 5V supply)</li>
+                  <li>1 × MPU (Magnetic Pick-Up) speed sensing input</li>
+                  <li>2 × 3-phase AC voltage sensing inputs (generator + bus/utility)</li>
+                  <li>1 × 3-phase AC current sensing input (via CTs)</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Signal Outputs</h5>
+                <ul>
+                  <li>12 × Sinking digital outputs</li>
+                  <li>2 × Analog outputs (voltage or current mode)</li>
+                  <li>3 × PWM outputs</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">The manual covers mounting/installation procedures with DIN rail and panel-mount options, grounding requirements, wire gauge recommendations (14–20 AWG depending on signal type, shielded twisted pair for communications), power supply requirements, LED indicator meanings (power/firmware status, CAN 1/2 communication), AC metering accuracy specifications, and the programming/firmware update interface.</p>
+
+            <div class="section-preview">
+              <h5>Sections in This Document</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§1</span> Introduction &amp; Scope</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§2</span> Safety &amp; ESD</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§3</span> Basics (Physical, Env, Wiring, Power)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§4</span> Communications (CAN, RS-485, Ethernet)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§5</span> Inputs (DI, AI, MPU)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§6</span> Outputs (DO, AO, PWM)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§7</span> AC Sensing (V &amp; I)</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hw')"><span class="sp-num">§8</span> Programming Interface</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">4-Wire Ethernet</span>
+              <span class="topic-tag">2-Wire Ethernet</span>
+              <span class="topic-tag">CAN Bus</span>
+              <span class="topic-tag">RS-485</span>
+              <span class="topic-tag">Digital I/O</span>
+              <span class="topic-tag">Analog I/O</span>
+              <span class="topic-tag">PWM</span>
+              <span class="topic-tag">AC Sensing</span>
+              <span class="topic-tag">CT Input</span>
+              <span class="topic-tag">MPU</span>
+              <span class="topic-tag">IP20</span>
+              <span class="topic-tag">DIN Rail Mount</span>
+              <span class="topic-tag">LED Status</span>
+              <span class="topic-tag">ESD</span>
+            </div>
+          </div>
+
+          <!-- ==================== HMI ==================== -->
+          <div class="doc-overview-card" onclick="showView('hmi')">
+            <div class="doc-id-badge">LEBE20715-02 · 280 pages · ©2025</div>
+            <h4>🖥️ HMI Manual – Paralleling Genset Control</h4>
+            <p class="summary-lead">Complete operator interface documentation for the ECS 200 touchscreen HMI used in paralleling generator set applications. The HMI connects to the controller over Ethernet and provides real-time system visualization, parameter configuration, event management, and security-controlled access to all operational and service-level functions.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Physical &amp; Installation</h5>
+                <ul>
+                  <li>Panel-mount touchscreen with specified panel cutout dimensions</li>
+                  <li>Power requirements and mechanical specifications</li>
+                  <li>Operating temperature range for display and backlight</li>
+                  <li>Ethernet communication wiring guidelines</li>
+                  <li>HMI software flashing / update procedure</li>
+                  <li>Cleaning guidelines for touchscreen surface</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Navigation &amp; User Interface</h5>
+                <ul>
+                  <li><strong>Menu Button</strong> – Main menu with two levels of submenus</li>
+                  <li><strong>Home Button</strong> – Return to system overview</li>
+                  <li><strong>Events Button</strong> – Active alarms &amp; event history</li>
+                  <li><strong>Alarm Acknowledgement</strong> – Acknowledge active alarms</li>
+                  <li><strong>Lock/Unlock</strong> – Screen lock with timeout</li>
+                  <li><strong>ECS Button</strong> – Engine Control Switch (Off/Manual/Auto)</li>
+                  <li>Wayfinding text, annunciator strip, context buttons</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>System Parameter Screens</h5>
+                <ul>
+                  <li><strong>System Overview</strong> – Multi-unit plant view with utility, bus bars, breaker status, real power</li>
+                  <li><strong>Paralleling</strong> – Dead Bus Arbitration, Sync Overview, Load Share, Load Sense Load Demand (LSLD)</li>
+                  <li><strong>Genset / Engine / AC</strong> – Per-unit status, oil pressure, coolant temp, voltage, current, frequency, power</li>
+                  <li><strong>I/O Overview</strong> – Digital inputs/outputs, analog I/O, PWM, remote DI/DO/AI/AO/RTD, custom maps</li>
+                  <li><strong>Voltage Regulator</strong> – IVR status and settings</li>
+                  <li><strong>Network Status</strong> – Module communication health</li>
+                  <li><strong>kW Load Histogram</strong> – Historical load distribution</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Control &amp; Configuration</h5>
+                <ul>
+                  <li><strong>Control Features</strong> – Paralleling, idle/rated, load shed, fuel transfer, AMF, cycle timer, gas blending</li>
+                  <li><strong>Annunciator</strong> – LED bar, alarm outputs, icon bar, custom events, lamp test</li>
+                  <li><strong>Custom Screens</strong> – User-designed HMI screens</li>
+                  <li><strong>Configurable Parameters</strong> – DBA, load share, generator ratings, voltage reg, Ethernet, SCADA, engine management</li>
+                  <li><strong>Security</strong> – Multi-level password management (user/service levels), enter/change/edit password workflows</li>
+                  <li><strong>Remote HMI</strong> – Remote display capability, flash file, remote password management</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Additional topics include loss of communication behaviour (how the HMI recovers when controller connection drops), remote sensing for utility monitoring, hardware block diagrams showing system interconnections, and HMI file manager for managing configuration files and on-screen PDF manuals. The manual also covers display pairing for genset remote display scenarios and Ethernet remote display setup using an ET-connected laptop.</p>
+
+            <div class="section-preview">
+              <h5>Major Sections (18 total)</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§1–2</span> General Info &amp; Safety</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§3</span> Installation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§4</span> User Orientation &amp; Navigation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§5</span> System Parameter Screens</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§6</span> HMI Events &amp; Logs</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§7</span> Control Feature Parameters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§8</span> Annunciator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§9</span> Custom Screens</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§10</span> Configurable Parameters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§11</span> Preferences &amp; Setup</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§12–13</span> Device Info &amp; File Manager</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('hmi')"><span class="sp-num">§14–18</span> Remote HMI, Sensing, HW Diagram</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (control logic behind HMI screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (controller connections)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (remote data access)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Touchscreen</span>
+              <span class="topic-tag">System Overview</span>
+              <span class="topic-tag">Dead Bus Arbitration</span>
+              <span class="topic-tag">Synchronization</span>
+              <span class="topic-tag">Load Share</span>
+              <span class="topic-tag">LSLD</span>
+              <span class="topic-tag">Event Logs</span>
+              <span class="topic-tag">Annunciator</span>
+              <span class="topic-tag">Custom Screens</span>
+              <span class="topic-tag">Password Security</span>
+              <span class="topic-tag">Remote Display</span>
+              <span class="topic-tag">AMF</span>
+              <span class="topic-tag">Fuel Transfer</span>
+              <span class="topic-tag">Voltage Regulator</span>
+              <span class="topic-tag">kW Histogram</span>
+            </div>
+          </div>
+
+          <!-- ==================== SOFTWARE ==================== -->
+          <div class="doc-overview-card" onclick="showView('sw')">
+            <div class="doc-id-badge">LEBE20716-02 · 420 pages · ©2025</div>
+            <h4>⚙️ Software Operations Manual – Paralleling Generator Set Control</h4>
+            <p class="summary-lead">The most comprehensive document in the suite (420 pages, 42 major sections), this manual defines the complete software behaviour of the ECS 200 when configured as a paralleling generator set controller. It covers everything from initial electrical connections and basic parameter setup through advanced island/utility paralleling algorithms, integrated voltage regulation, PLC logic programming, and functional safety certification requirements.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Generator Set Configuration</h5>
+                <ul>
+                  <li><strong>Engine Sensors</strong> – Oil pressure, coolant temperature sensor mapping and threshold configuration</li>
+                  <li><strong>Generator Ratings</strong> – Ratings groups, output voltage, frequency, and power settings</li>
+                  <li><strong>Engine Speed</strong> – Speed control, idle/rated speed settings, MPU configuration</li>
+                  <li><strong>Generator Protection</strong> – Overcurrent, voltage/current imbalance, over/under frequency, over/under voltage, reverse real power, reverse reactive power, over/under reactive power, open phase detection, pole slip detection, utility RoCoF</li>
+                  <li><strong>AC Sensing</strong> – Voltage and current measurement configuration and calibration</li>
+                  <li><strong>Setpoint Save/Restore</strong> – Configuration backup and restore procedures</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Start/Stop &amp; Engine Control</h5>
+                <ul>
+                  <li><strong>Automatic Control</strong> – Auto mode with remote start/stop via DI or SCADA</li>
+                  <li><strong>Cranking Control</strong> – Controller-controlled cranking sequences with attempt/rest timers</li>
+                  <li><strong>Fuel Priming</strong> – Pre-start fuel priming setpoints and timers</li>
+                  <li><strong>Starter Motor Protection</strong> – Over-crank protection and starter engage/disengage logic</li>
+                  <li><strong>Emergency Stop</strong> – E-stop input handling and shutdown sequences</li>
+                  <li><strong>Cooldown Timer</strong> – Configurable cooldown period before engine shutdown</li>
+                  <li><strong>Instant Auto</strong> – Fast transfer to auto mode for critical loads</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Event Handling &amp; I/O</h5>
+                <ul>
+                  <li><strong>Event Response Configs (ERCs)</strong> – Configurable per-input alarm/shutdown behaviour</li>
+                  <li><strong>Digital Inputs (12)</strong> – Programmable for commands, status, or system events via Cat ET</li>
+                  <li><strong>Analog Inputs (3)</strong> – Resistive or voltage mode with built-in and custom sensor maps</li>
+                  <li><strong>Digital Outputs (12)</strong> – Programmable for status parameters or system events</li>
+                  <li><strong>Analog Outputs (2)</strong> – Voltage or current mode output</li>
+                  <li><strong>PWM Outputs (3)</strong> – Duty cycle controlled outputs for fan/valve control</li>
+                  <li><strong>SCADA Alarm Bit Packing</strong> – Grouped alarm status for efficient remote monitoring</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Protection &amp; Safety</h5>
+                <ul>
+                  <li><strong>Overcurrent Protection</strong> – Definite time, IEC/IEEE inverse time curves, thermal damage curve</li>
+                  <li><strong>Arc Flash Limit</strong> – Maintenance mode with reduced trip thresholds</li>
+                  <li><strong>Generator Stator Current Limiter</strong> – Real-time stator current limiting</li>
+                  <li><strong>Breaker Control</strong> – Close/trip commands, breaker health monitoring</li>
+                  <li><strong>Functional Safety (§42)</strong> – IEC 61508 compliant functions: overvoltage, overcurrent, overspeed, E-stop, parity inputs, ECM/governor power removal, fuel gas shut-off, sync breaker control, setpoint calibration</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Island Paralleling (§40)</h5>
+                <ul>
+                  <li><strong>Failsafe Mode</strong> – Degraded operation when comms lost between units</li>
+                  <li><strong>Dead Bus Arbitration</strong> – First-on logic to energize a dead bus with configurable priority</li>
+                  <li><strong>Synchronization</strong> – Voltage, frequency, and phase angle matching with gain tuning procedures</li>
+                  <li><strong>Load Sharing</strong> – Real (kW) and reactive (kVAR) droop/isochronous sharing with tuning guide</li>
+                  <li><strong>LSLD</strong> – Automatic load sense/load demand with add/drop logic, N+X redundancy, spinning reserve, proactive add, sequence strategies, event-based redundancy</li>
+                  <li><strong>Bus/Intertie Protections</strong> – Inter-bus transfer and protection coordination</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Utility Paralleling &amp; Advanced Features</h5>
+                <ul>
+                  <li><strong>AMF Control (§21)</strong> – Automatic Mains Failure with utility-to-genset and genset-to-utility transfer, utility AC monitoring</li>
+                  <li><strong>Base Load / VAR / PF Control (§41)</strong> – kW export, reactive load, and power factor control in utility parallel mode</li>
+                  <li><strong>IVR (§36)</strong> – Integrated Voltage Regulator with PWM excitation, PID tuning, under-frequency roll-off, reactive droop compensation</li>
+                  <li><strong>TLR (§37)</strong> – Transient Load Relief with operation, setpoint config, and tuning procedures</li>
+                  <li><strong>PLC (§38)</strong> – Integrated PLC with logic blocks, function blocks, special blocks, debug, PVC file creation, TCP/IP download</li>
+                  <li><strong>Web Server (§39)</strong> – Built-in HTTP server for remote monitoring</li>
+                  <li><strong>Dynamic Gas Blending, Gas Train, Fuel Transfer, Driven Equipment Control</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="section-preview">
+              <h5>All 42 Major Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§1–2</span> General Info &amp; Safety</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§3</span> Initial Operation &amp; Orientation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§4–5</span> Setpoints &amp; AC Sensing</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§6</span> Start / Stop Control</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§7–8</span> Verification &amp; Event Handling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§9–10</span> Security &amp; Hours/Meters</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§11–15</span> I/O: DI, AI, DO, AO, PWM</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§16–17</span> Overcurrent &amp; Breaker</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§18–20</span> Histogram, kW Relay, PCT</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§21–23</span> AMF, Load Shed, Battery</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§24–31</span> Cooling, Gas, Fuel, ESO</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§32–35</span> Ethernet, SCADA, CAN, Modules</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§36–37</span> IVR &amp; Transient Load Relief</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§38–39</span> PLC &amp; Web Server</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§40</span> Island Paralleling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§41</span> Utility Paralleling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('sw')"><span class="sp-num">§42</span> Functional Safety</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (operator screens for these features)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (I/O pinouts &amp; wiring)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('bop')">LEBE20720 – BOP Manual (ancillary plant controls)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (Modbus registers for these parameters)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Engine Sensors</span>
+              <span class="topic-tag">Generator Protection</span>
+              <span class="topic-tag">Overcurrent Curves</span>
+              <span class="topic-tag">Breaker Control</span>
+              <span class="topic-tag">ERCs</span>
+              <span class="topic-tag">Auto Mains Failure</span>
+              <span class="topic-tag">Dead Bus Arbitration</span>
+              <span class="topic-tag">Synchronization</span>
+              <span class="topic-tag">Load Share</span>
+              <span class="topic-tag">LSLD</span>
+              <span class="topic-tag">IVR</span>
+              <span class="topic-tag">PLC</span>
+              <span class="topic-tag">TLR</span>
+              <span class="topic-tag">Functional Safety</span>
+              <span class="topic-tag">Gas Train</span>
+              <span class="topic-tag">Web Server</span>
+            </div>
+          </div>
+
+          <!-- ==================== BOP ==================== -->
+          <div class="doc-overview-card" onclick="showView('bop')">
+            <div class="doc-id-badge">LEBE20720-00 · 159 pages · ©2025</div>
+            <h4>🏭 Balance of Plant (BOP) Software Operations Manual</h4>
+            <p class="summary-lead">Covers the auxiliary plant control features that extend the ECS 200 beyond core genset control into Combined Heat and Power (CHP) and containerized power plant applications. The BOP software manages thermal circuits — cooling water, aftercooler, customer heating, exhaust heat recovery — as well as enclosure ventilation and safety systems. Each feature section follows a consistent structure: functional description, control logic flow diagrams, setpoints, diagnostics/status events, I/O mapping, and HMI display requirements.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Cooling Circuit Controls</h5>
+                <ul>
+                  <li><strong>SCAC 3-Way Valve &amp; Pump (§5)</strong> – Separate Circuit Aftercooler with PID-controlled 3-way mixing valve, end position sensors, pump follow-up delay timer, immediate stop logic</li>
+                  <li><strong>SCAC Radiator (§6)</strong> – Aftercooler radiator with VFD (variable frequency drive) or staged single-speed fan switching, temperature setpoint calculation</li>
+                  <li><strong>Engine Cooling Valve &amp; Pump (§7)</strong> – Jacket water 3-way valve control with pump management</li>
+                  <li><strong>Engine Cooling Radiator (§8)</strong> – Engine circuit radiator with VFD or staged fan, PID control, temperature setpoint logic</li>
+                  <li><strong>Dual Core Radiator (§9)</strong> – Combined SCAC + JW radiator control for power-only mode with VFD or stage switching, control deviation calculation</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Heat Recovery &amp; CHP</h5>
+                <ul>
+                  <li><strong>Customer Site Heating (§10)</strong> – Heating circuit with cooling water heat exchanger, 3-way valve (can be installed in heating circuit or engine cooling circuit), pump control</li>
+                  <li><strong>Exhaust Heat Exchanger Bypass (§11)</strong> – EHE bypass control for customer heating with exhaust gas valve management, multiple operational scenarios with flow diagrams</li>
+                  <li><strong>Exhaust Gas Temp Sensors (§14)</strong> – Additional exhaust temperature I/O for CHP monitoring, trip setpoint calculations, and auxiliary temperature sensor configuration</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Ventilation &amp; Safety</h5>
+                <ul>
+                  <li><strong>Enclosure Ventilation (§12)</strong> – Container/enclosure ventilation with and without circulating air, ventilation fan control, inlet/outlet louver control, standby ventilation mode</li>
+                  <li><strong>Smoke/Fire Alarm (§13)</strong> – Fire alarm reaction (ventilation shutdown), gas alarm reaction (full ventilation), prioritization logic between fire and gas alarm scenarios</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>BOP I/O &amp; Integration</h5>
+                <ul>
+                  <li><strong>BOP Ethernet I/O Module (§15)</strong> – Remote I/O module configuration for BOP signals</li>
+                  <li><strong>Config Code: CHP &amp; Container</strong> – I/O mapping for CHP + container applications</li>
+                  <li><strong>Config Code: JW &amp; SCAC</strong> – I/O mapping for jacket water + aftercooler</li>
+                  <li><strong>Config Code: Combined</strong> – Full JW, SCAC, CHP, and container I/O mapping</li>
+                  <li>HMI display requirements for all BOP DI/DO/AI/AO points</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Every BOP feature includes comprehensive control setpoint tables (enable/disable, temperature thresholds, PID gains, timers, hysteresis), diagnostic event definitions (sensor failures, actuator faults, communication errors), status events, data feedback parameters for monitoring, complete I/O allocation tables, and HMI screen layouts showing overview and configuration screens with parameter labels and value formats.</p>
+
+            <div class="section-preview">
+              <h5>All 15 Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§1–4</span> General, Safety, Glossary, Overview</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§5</span> SCAC Valve &amp; Pump</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§6</span> SCAC Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§7</span> Engine Cooling Valve/Pump</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§8</span> Engine Cooling Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§9</span> Dual Core Radiator</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§10</span> Customer Site Heating</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§11</span> Exhaust HE Bypass</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§12</span> Enclosure Ventilation</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§13</span> Smoke/Fire Alarm</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§14</span> Exhaust &amp; Aux Temp Sensors</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('bop')"><span class="sp-num">§15</span> BOP Ethernet I/O Module</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (core genset control)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (BOP display screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('scada')">LEBE23522 – SCADA Manual (BOP Modbus registers)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (I/O wiring)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">SCAC</span>
+              <span class="topic-tag">3-Way Valve</span>
+              <span class="topic-tag">PID Control</span>
+              <span class="topic-tag">VFD Radiator</span>
+              <span class="topic-tag">Staged Fan</span>
+              <span class="topic-tag">Jacket Water</span>
+              <span class="topic-tag">CHP Heating</span>
+              <span class="topic-tag">Heat Exchanger</span>
+              <span class="topic-tag">Exhaust Bypass</span>
+              <span class="topic-tag">Ventilation</span>
+              <span class="topic-tag">Louver Control</span>
+              <span class="topic-tag">Fire Alarm</span>
+              <span class="topic-tag">Gas Alarm</span>
+              <span class="topic-tag">BOP I/O Module</span>
+              <span class="topic-tag">Dual Core Radiator</span>
+            </div>
+          </div>
+
+          <!-- ==================== SCADA ==================== -->
+          <div class="doc-overview-card" onclick="showView('scada')">
+            <div class="doc-id-badge">LEBE23522-00 · 91 pages · ©2025</div>
+            <h4>📡 Cat ECS SCADA Modbus Software Manual</h4>
+            <p class="summary-lead">Defines the complete Modbus TCP/IP SCADA interface for remote supervisory control and data acquisition from ECS 100 and ECS 200 controllers. This is the integration guide for connecting the Cat ECS to building management systems (BMS), plant SCADA systems, and third-party monitoring platforms. All data is accessed via standard Modbus TCP/IP (port 502) with password-protected read/write access.</p>
+
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h5>Connection &amp; Security Setup</h5>
+                <ul>
+                  <li><strong>IP Configuration</strong> – Set via Cat Electronic Technician (ET) service tool</li>
+                  <li><strong>Data Link Enabling</strong> – Enable SCADA access with password via Cat ET or HMI display</li>
+                  <li><strong>HMI Configuration</strong> – SCADA settings accessible through HMI configuration screens</li>
+                  <li><strong>Password Security</strong> – Password-protected write access, password length and complexity rules, lockout behaviour</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Data Interpretation &amp; Scaling</h5>
+                <ul>
+                  <li><strong>1-Word Unsigned Integer</strong> – Read/write for simple numerical values with scaling factors</li>
+                  <li><strong>2-Word Unsigned Integer</strong> – Read/write for large values (energy meters, hours) spanning two registers</li>
+                  <li><strong>Byte Extracting</strong> – Unpacking multiple status values from a single register</li>
+                  <li><strong>Byte Packing</strong> – Combining multiple command values into a single write register</li>
+                  <li><strong>State/Status/Command</strong> – Enumerated state values, status bit flags, command codes</li>
+                  <li><strong>Complex Data</strong> – Multi-register structured data for event logs and timestamped records</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Genset &amp; Engine Register Maps</h5>
+                <ul>
+                  <li><strong>Genset Ratings</strong> – Active group, rated voltage, current, power, frequency</li>
+                  <li><strong>Genset AC</strong> – Phase voltages, currents, frequency, power factor</li>
+                  <li><strong>Genset Power/Energy</strong> – Real (kW), reactive (kVAR), apparent (kVA), kWh, kVARh</li>
+                  <li><strong>State/Mode/Status</strong> – Operating mode, run status, fault codes</li>
+                  <li><strong>Start/Stop Commands</strong> – Remote start, stop, reset, mode select</li>
+                  <li><strong>Load Share / LSLD</strong> – Load demand status, kW setpoint, add/drop commands</li>
+                  <li><strong>Paralleling Data</strong> – Gen #1 through Gen #32 paralleling status registers</li>
+                  <li><strong>Engine Data</strong> – Service meter, speed, fuel rate, oil pressure/temp, coolant temp, exhaust temps, intake, turbocharger, filter differential, aftertreatment (DEF level, DPF soot, SCR temp), gas data, dynamic gas blending</li>
+                </ul>
+              </div>
+              <div class="detail-block">
+                <h5>Events, Network &amp; Special Registers</h5>
+                <ul>
+                  <li><strong>Acknowledge/Reset</strong> – Remote event acknowledgement and alarm reset commands</li>
+                  <li><strong>Alarm Bit Packing</strong> – Hard shutdown, soft shutdown, lamp, horn, display events packed into user-configurable alarm groups</li>
+                  <li><strong>Annunciator</strong> – Remote annunciator status registers</li>
+                  <li><strong>Event Logs</strong> – Active event count, system event log (genset + engine), status event log with timestamps</li>
+                  <li><strong>Network Status</strong> – Communication health for all connected modules</li>
+                  <li><strong>Module Information</strong> – Firmware versions, serial numbers, hardware IDs</li>
+                  <li><strong>Grid Code (§10)</strong> – Grid code compliance registers (frequency/voltage ride-through, power ramp rates)</li>
+                  <li><strong>Balance of Plant (§11)</strong> – BOP-specific registers for CHP thermal management</li>
+                  <li><strong>Programmable Cycle Timer &amp; Real-Time Clock</strong> – Timer status and RTC read/write</li>
+                </ul>
+              </div>
+            </div>
+
+            <p style="margin-top:14px;">Section 12 provides practical worked examples showing how to read and write Modbus registers including proper scaling, byte ordering, and multi-register reads. The genset paralleling data section supports up to 32 generator units in a single plant, each with its own register block for remote monitoring of the entire paralleling system.</p>
+
+            <div class="section-preview">
+              <h5>All 12 Sections</h5>
+              <div class="section-preview-grid">
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§1–3</span> General Info, Safety, Glossary</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§4</span> SCADA Modbus Overview</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§5</span> Data Link Setup &amp; Config</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§6</span> Data Interpretation &amp; Scaling</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§7</span> Modbus Register Maps</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§8</span> Events &amp; Alarms</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§9</span> Network &amp; Module</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§10</span> Grid Code</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§11</span> Balance of Plant</div>
+                <div class="section-preview-item" onclick="event.stopPropagation(); showView('scada')"><span class="sp-num">§12</span> Worked Examples</div>
+              </div>
+            </div>
+
+            <div class="xref-section">
+              <h5>Cross-References</h5>
+              <div class="xref-badges">
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('sw')">LEBE20716 – Software Manual (parameter definitions behind registers)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hmi')">LEBE20715 – HMI Manual (SCADA config screens)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('bop')">LEBE20720 – BOP Manual (BOP register definitions)</span>
+                <span class="xref-badge" onclick="event.stopPropagation(); showView('hw')">LEBE20713 – Hardware Manual (Ethernet port specs)</span>
+              </div>
+            </div>
+
+            <div class="key-topics">
+              <span class="topic-tag">Modbus TCP/IP</span>
+              <span class="topic-tag">Port 502</span>
+              <span class="topic-tag">Register Map</span>
+              <span class="topic-tag">Data Scaling</span>
+              <span class="topic-tag">Byte Packing</span>
+              <span class="topic-tag">Genset Registers</span>
+              <span class="topic-tag">Engine Data</span>
+              <span class="topic-tag">Paralleling (32 units)</span>
+              <span class="topic-tag">Alarm Bit Packing</span>
+              <span class="topic-tag">Event Logs</span>
+              <span class="topic-tag">Grid Code</span>
+              <span class="topic-tag">BOP Registers</span>
+              <span class="topic-tag">Cat ET</span>
+              <span class="topic-tag">Real-Time Clock</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HARDWARE VIEW -->
+      <div class="doc-detail" id="view-hw">
+        <div class="doc-header-card">
+          <div class="doc-title">Controller Hardware Manual</div>
+          <div class="doc-number">LEBE20713-01 · Cat® ECS 100 / ECS 200</div>
+          <div class="doc-summary">Provides hardware component details for the Cat® Energy Control System controller. The controller is a single piece of hardware used across multiple applications. Each application uses specific software and additional components (touch screens, expansion modules, CDVRs) to form a complete control system. The controller features a wide range of signal interfaces for communications, digital/analog I/O, AC sensing, and power management.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 29 pages</span>
+            <span class="meta-badge">©️ 2024 Caterpillar</span>
+            <span class="meta-badge">🌡️ –40°C to 70°C</span>
+            <span class="meta-badge">📦 IP20 Rated</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-hw"></div>
+      </div>
+
+      <!-- HMI VIEW -->
+      <div class="doc-detail" id="view-hmi">
+        <div class="doc-header-card">
+          <div class="doc-title">HMI Manual – Paralleling Genset Control</div>
+          <div class="doc-number">LEBE20715-02 · Cat® ECS 200</div>
+          <div class="doc-summary">Comprehensive manual for the Human Machine Interface (HMI) used with the ECS 200 paralleling genset controller. Covers physical installation, touchscreen navigation and menu system, system parameter viewing, control feature configuration, event management, annunciator setup, custom screen creation, configurable parameters, security management, remote HMI access, and hardware block diagrams.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 280 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">🖥️ Touchscreen</span>
+            <span class="meta-badge">🔒 Multi-level Security</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-hmi"></div>
+      </div>
+
+      <!-- SOFTWARE VIEW -->
+      <div class="doc-detail" id="view-sw">
+        <div class="doc-header-card">
+          <div class="doc-title">Software Operations Manual – Paralleling Generator Set Control</div>
+          <div class="doc-number">LEBE20716-02 · Cat® ECS 200</div>
+          <div class="doc-summary">The primary software manual for the ECS 200 paralleling genset controller. Covers initial setup and user orientation, generator set parameter configuration, AC sensing, start/stop control, event handling, I/O programming, overcurrent and generator protection, breaker control, Auto Mains Failure (AMF), load management, integrated voltage regulator (IVR), transient load relief (TLR), PLC programming, web server, island and utility paralleling functions, and functional safety requirements.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 420 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">⚡ 42 Major Sections</span>
+            <span class="meta-badge">🔐 Functional Safety</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-sw"></div>
+      </div>
+
+      <!-- BOP VIEW -->
+      <div class="doc-detail" id="view-bop">
+        <div class="doc-header-card">
+          <div class="doc-title">Balance of Plant Software Operations Manual</div>
+          <div class="doc-number">LEBE20720-00 · Cat® ECS 200</div>
+          <div class="doc-summary">Covers the Balance of Plant (BOP) control software for CHP (Combined Heat and Power) and containerized genset applications. Includes cooling circuit control (SCAC, engine cooling, dual core radiators), customer site heating, exhaust heat exchanger management, genset enclosure ventilation, fire/gas safety alarms, exhaust temperature monitoring, and BOP-specific I/O module configuration. Each feature includes functional descriptions, control setpoints, diagnostics, HMI display concepts, and I/O mapping.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 159 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">🏭 CHP & Container</span>
+            <span class="meta-badge">🌡️ Thermal Control</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-bop"></div>
+      </div>
+
+      <!-- SCADA VIEW -->
+      <div class="doc-detail" id="view-scada">
+        <div class="doc-header-card">
+          <div class="doc-title">Cat ECS SCADA Modbus Software Manual</div>
+          <div class="doc-number">LEBE23522-00 · Cat® ECS 100 / ECS 200</div>
+          <div class="doc-summary">Defines the SCADA (Supervisory Control and Data Acquisition) Modbus TCP/IP communication interface for the Cat ECS controllers. Covers the complete setup procedure, data interpretation rules (numerical scaling, state/status/command encoding, byte packing), detailed Modbus register maps for genset parameters, engine data, I/O, events/alarms, network status, grid code compliance data, and Balance of Plant registers.</div>
+          <div class="doc-meta">
+            <span class="meta-badge">📄 91 pages</span>
+            <span class="meta-badge">©️ 2025 Caterpillar</span>
+            <span class="meta-badge">📡 Modbus TCP/IP</span>
+            <span class="meta-badge">📋 Register Maps</span>
+          </div>
+        </div>
+        <div class="sections-container" id="sections-scada"></div>
+      </div>
+
+      <!-- MODBUS SUGGESTED REGISTERS VIEW -->
+      <div class="doc-detail" id="view-modbus">
+
+        <!-- Connection Summary -->
+        <div class="modbus-intro">
+          <h3>📋 Suggested Modbus Register Polling List — ECS 200 Paralleling</h3>
+          <p>This curated register list is designed for a <strong>typical 1-second SCADA polling cycle</strong> monitoring one or more Cat® ECS 200P paralleling genset controllers. Registers are grouped by priority and function, organized to support efficient batch reads (contiguous register blocks where possible).</p>
+          <p>All register numbers below are for the <strong>ECS 200 Paralleling (200P)</strong> column from the SCADA manual unless otherwise noted. Engine sensor data is read from the ECS 200G (genset) register set, accessible through the paralleling controller's CAN data link.</p>
+          <div class="conn-info-grid">
+            <div class="conn-info-box">
+              <div class="conn-label">Read Port</div>
+              <div class="conn-value">TCP 502</div>
+              <div class="conn-note">Modbus TCP — Read registers</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Write Port</div>
+              <div class="conn-value">TCP 50200</div>
+              <div class="conn-note">Commands &amp; setpoints</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Status Port</div>
+              <div class="conn-value">TCP 50201</div>
+              <div class="conn-note">Events, module status, logs</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Function Codes</div>
+              <div class="conn-value">03 / 16</div>
+              <div class="conn-note">Read Holding / Write Multiple</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Max Registers</div>
+              <div class="conn-value">125 / read</div>
+              <div class="conn-note">Per single transaction</div>
+            </div>
+            <div class="conn-info-box">
+              <div class="conn-label">Byte Order</div>
+              <div class="conn-value">Big-Endian</div>
+              <div class="conn-note">MSW at lower address</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section">
+          <h4>📥 Download Recommended Register Spreadsheets</h4>
+          <p style="font-size:0.82rem;color:#555;margin:-6px 0 14px;">One file per device &amp; port — ready to import directly into your SCADA configuration tool.</p>
+          <div class="download-grid">
+            <a href="ECS 200P Port 502 Fast Read.xlsx" download class="download-card">
+              <span class="dl-icon">⚡</span>
+              <div class="dl-info">
+                <h5>200P — Port 502 — Fast Read</h5>
+                <p>1-second poll: AC power, voltage, current, frequency, breakers, alarms, operating state, system totals</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="ECS 200P Port 502 Slow Read.xlsx" download class="download-card">
+              <span class="dl-icon">📈</span>
+              <div class="dl-info">
+                <h5>200P — Port 502 — Slow Read</h5>
+                <p>5–30s poll: energy meters, ratings, RTC, data link, Ethernet, I/O, LSLD</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="ECS 200G Port 502 Engine Read.xlsx" download class="download-card">
+              <span class="dl-icon">🛢️</span>
+              <div class="dl-info">
+                <h5>200G — Port 502 — Engine Sensors</h5>
+                <p>Oil pressure, coolant temp, fuel level, exhaust temps, turbo boost, hours, RPM</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="ECS 200P Port 50200 Write.xlsx" download class="download-card">
+              <span class="dl-icon">✏️</span>
+              <div class="dl-info">
+                <h5>200P — Port 50200 — Write Commands</h5>
+                <p>Alarm ack, mode control, start/stop, kW/PF/VAR/freq/voltage setpoints</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="ECS 200P Port 50201 Status.xlsx" download class="download-card">
+              <span class="dl-icon">🔔</span>
+              <div class="dl-info">
+                <h5>200P — Port 50201 — Status &amp; Annunciator</h5>
+                <p>Module online, event counts, 23 NFPA 110 annunciator status points</p>
+              </div>
+              <span class="dl-badge">XLSX</span>
+            </a>
+            <a href="CAT ECS 200 SCADA Genset READ v1.1.xlsx" download class="download-card" style="border-left:3px solid #999;">
+              <span class="dl-icon">📋</span>
+              <div class="dl-info">
+                <h5>Original Cat® Template (Reference)</h5>
+                <p>Full 545-register list in original Cat format — for cross-reference</p>
+              </div>
+              <span class="dl-badge">REF</span>
+            </a>
+            <a href="thingsboard-widget/ecs200_widget_bundle.json" download class="download-card" style="border-left:3px solid #17a2b8;">
+              <span class="dl-icon">🧩</span>
+              <div class="dl-info">
+                <h5>ThingsBoard Widget Bundle</h5>
+                <p>Import via: Widget Library → Bundles → + → Import widgets bundle</p>
+              </div>
+              <span class="dl-badge">JSON</span>
+            </a>
+            <a href="thingsboard-widget/ecs200_widget_type.json" download class="download-card" style="border-left:3px solid #17a2b8;">
+              <span class="dl-icon">🔧</span>
+              <div class="dl-info">
+                <h5>ThingsBoard Single Widget</h5>
+                <p>Import via: Open any bundle → + → Import widget</p>
+              </div>
+              <span class="dl-badge">JSON</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Polling Summary -->
+        <div class="poll-summary">
+          <div class="poll-summary-card">
+            <div class="ps-rate">1 s</div>
+            <div class="ps-label">Critical Real-Time</div>
+            <div class="ps-detail">AC power, voltage, current, frequency, breaker &amp; bus status, operating state</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">1 s</div>
+            <div class="ps-label">Engine &amp; Protection</div>
+            <div class="ps-detail">Oil pressure, coolant temp, battery, speed, fuel level, alarm groups</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">1–2 s</div>
+            <div class="ps-label">Paralleling / Load Mgmt</div>
+            <div class="ps-detail">DBA state, sync mode, load share, LSLD, per-unit paralleling data</div>
+          </div>
+          <div class="poll-summary-card">
+            <div class="ps-rate">5–30 s</div>
+            <div class="ps-label">Slow-Changing Data</div>
+            <div class="ps-detail">Energy meters, engine hours, exhaust temps, I/O, network status, clock</div>
+          </div>
+        </div>
+
+        <!-- Best Practices Callout -->
+        <div class="modbus-notes">
+          <h5>⚡ Best Practices from SCADA Manual §13</h5>
+          <ul>
+            <li><strong>Batch reads</strong> — Read contiguous register blocks in a single FC03 transaction (up to 125 registers). The groups below are arranged to support this.</li>
+            <li><strong>Data prioritization</strong> — Poll critical registers every 1 s, slow-changing data every 5–30 s. Use the User Alarm Groups (regs 101–110) for event-driven alerting instead of polling hundreds of event registers.</li>
+            <li><strong>Persistent connections</strong> — Keep TCP connections open; do not create a new socket per transaction.</li>
+            <li><strong>Retry with limits</strong> — Implement retries for failed reads but limit to 2–3 attempts. Use timeouts of 1000–3000 ms.</li>
+            <li><strong>Two-word registers</strong> — Power/energy registers are 32-bit (2 words). MSW is at the lower address. Combine as: <code>value = (MSW &lt;&lt; 16) | LSW</code>, then apply scaling and offset.</li>
+          </ul>
+        </div>
+
+        <!-- CONTIGUOUS READ BLOCK PLAN -->
+        <div class="poll-group block-plan-group" id="pg-blocks">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-blocks')">
+            <h4>📦 Contiguous Read Block Plan <span class="poll-badge" style="background:#fff;color:#17a2b8;">FC03 TRANSACTIONS</span></h4>
+            <div><span class="poll-count">17 read blocks · 3 ports · optimized for batch reads</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+
+            <!-- Port 502 — 200P — Fast -->
+            <div class="block-sub-header">🔵 Port 502 — ECS 200P (Paralleling Controller) — 1-Second Fast Poll</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">P1</span></td>
+                  <td class="fc03-call">Read(2, 4)</td>
+                  <td>4</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>2</strong> Event Lamp · <strong>3</strong> Horn · <strong>4</strong> Hard Shutdown · <strong>5</strong> Soft Shutdown</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P2</span></td>
+                  <td class="fc03-call">Read(40, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>40</strong> Battery Voltage</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P3</span></td>
+                  <td class="fc03-call">Read(101, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>101–110</strong> User Alarm Groups A through J (160 configurable alarm bits)</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P4</span></td>
+                  <td class="fc03-call">Read(150, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>150</strong> Avg V · <strong>152</strong> Avg I · <strong>155–156</strong> Real Power (2w) · <strong>157</strong> Freq · <strong>159</strong> Avg PF<br><em style="color:#999;">Regs 151, 153, 154, 158 may be unused/reserved — ignore those words</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P5</span></td>
+                  <td class="fc03-call">Read(180, 12)</td>
+                  <td>12</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>180–182</strong> V L1L2/L2L3/L3L1 · <strong>183–185</strong> V L1N/L2N/L3N · <strong>186–188</strong> I L1/L2/L3 · <strong>189–191</strong> PF L1/L2/L3</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P6</span></td>
+                  <td class="fc03-call">Read(202, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>202–203</strong> Apparent Power kVA (2w) · <strong>205–206</strong> Reactive Power kVAR (2w)<br><em style="color:#999;">Reg 204 may be unused — ignore that word</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P7</span></td>
+                  <td class="fc03-call">Read(228, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>228</strong> Genset Available · <strong>229</strong> Breaker Status · <strong>230</strong> Operating Mode · <strong>231</strong> Auto Start State · <strong>232</strong> Engine Run</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P8</span></td>
+                  <td class="fc03-call">Read(730, 9)</td>
+                  <td>9</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>730</strong> DBA State · <strong>731</strong> DBA Fail Reason · <strong>738</strong> Sync Mode<br><em style="color:#999;">Regs 732–737 contain additional paralleling state data</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P9</span></td>
+                  <td class="fc03-call">Read(750, 31) <em style="font-size:0.7rem;font-weight:400;">for 1 unit</em></td>
+                  <td>31 <em style="font-size:0.7rem;">+22/unit</em></td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>750–754</strong> Units Online/Available/EPS · <strong>756–758</strong> System kW &amp; %Load · <strong>759–780</strong> Gen #1 block<br><em style="color:#999;">For N units: Read(750, 9 + 22×N). 4 units = 97 words. 5+ units → split into two reads.</em></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>1-second total:</strong> 9 transactions · ~77 words (1 unit) — well within typical PLC/SCADA cycle budget
+            </div>
+
+            <!-- Port 502 — 200P — Slow -->
+            <div class="block-sub-header">🟢 Port 502 — ECS 200P (Paralleling Controller) — Slow Poll (5–30 s)</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">P10</span></td>
+                  <td class="fc03-call">Read(208, 13)</td>
+                  <td>13</td>
+                  <td><span class="block-rate rate-5s">5–30 s</span></td>
+                  <td class="block-regs"><strong>208–213</strong> Energy Meters: kWh+/kVARh+/kWh– (3×2w) · <strong>214–220</strong> Ratings: V/I/Hz/kW/PF</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P11</span></td>
+                  <td class="fc03-call">Read(245, 3)</td>
+                  <td>3</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>245</strong> Date · <strong>246</strong> Year · <strong>247</strong> Time</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P12</span></td>
+                  <td class="fc03-call">Read(350, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>350</strong> Primary Data Link Status</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P13</span></td>
+                  <td class="fc03-call">Read(577, 6)</td>
+                  <td>6</td>
+                  <td><span class="block-rate rate-30s">30 s</span></td>
+                  <td class="block-regs"><strong>577–578</strong> 2-Wire Port A/B · <strong>579–582</strong> 4-Wire Ports #1–#4</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P14</span></td>
+                  <td class="fc03-call">Read(700, 16)</td>
+                  <td>16</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>700</strong> DI Status · <strong>701</strong> Iso DI · <strong>702</strong> DO Status · <strong>703–705</strong> AI #1–#3 · <strong>706–715</strong> AO &amp; PWM</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P15</span></td>
+                  <td class="fc03-call">Read(1465, 5)</td>
+                  <td>5</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1465</strong> LSLD Priority · <strong>1466</strong> LSLD State · <strong>1467</strong> Desired Units · <strong>1468</strong> Add Timer · <strong>1469</strong> Remove Timer</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P16</span></td>
+                  <td class="fc03-call">Read(1737, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1737</strong> Generator Real Load Control Base Load Setpoint</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">P17</span></td>
+                  <td class="fc03-call">Read(1805, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-2s">1–2 s</span></td>
+                  <td class="block-regs"><strong>1805</strong> Generator Real Load Control State</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Port 502 — 200G — Engine -->
+            <div class="block-sub-header">🟠 Port 502 — ECS 200G (Genset Controller) — Engine Sensor Data</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">G1</span></td>
+                  <td class="fc03-call">Read(41, 9)</td>
+                  <td>9</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>41</strong> Oil Pressure · <strong>42</strong> Coolant Temp · <strong>43</strong> Fuel Level · <strong>46</strong> Intake Air Temp · <strong>49</strong> Turbo Boost<br><em style="color:#999;">Regs 44–45, 47–48 contain filter / other engine data — safe to read</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">G2</span></td>
+                  <td class="fc03-call">Read(57, 10)</td>
+                  <td>10</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>57–58</strong> Exhaust Temps L/R · <strong>59</strong> Oil Temp · <strong>62</strong> Fuel Rate · <strong>65–66</strong> Engine Hours (2w)<br><em style="color:#999;">Regs 60–61, 63–64 contain aftercooler / filter data — safe to read</em></td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">G3</span></td>
+                  <td class="fc03-call">Read(154, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-1s">1 s</span></td>
+                  <td class="block-regs"><strong>154</strong> Engine Speed (RPM)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>Engine total:</strong> 3 transactions · 20 words — sent to the 200G genset controller IP address
+            </div>
+
+            <!-- Port 50201 — Status -->
+            <div class="block-sub-header">🟣 Port 50201 — ECS 200P — Module Status &amp; Annunciator</div>
+            <table class="block-table">
+              <thead>
+                <tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Rate</th><th>Key Registers Included</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="block-id">S1</span></td>
+                  <td class="fc03-call">Read(1, 2)</td>
+                  <td>2</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>1</strong> Paralleling Controller Online · <strong>2</strong> Engine ECM Online</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">S2</span></td>
+                  <td class="fc03-call">Read(16, 1)</td>
+                  <td>1</td>
+                  <td><span class="block-rate rate-5s">5 s</span></td>
+                  <td class="block-regs"><strong>16</strong> Number of Active Events — Genset Controller</td>
+                </tr>
+                <tr>
+                  <td><span class="block-id">S3</span></td>
+                  <td class="fc03-call">Read(611, 23)</td>
+                  <td>23</td>
+                  <td><span class="block-rate rate-2s">2–5 s</span></td>
+                  <td class="block-regs"><strong>611–633</strong> All annunciator points: E-Stop, Overcrank, Overspeed, Coolant, Oil, Battery, Fuel, SCR, Load Shed…</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:8px 16px; font-size:0.75rem; color:#0d6e7e; background:#e0f7fa; border-top:1px solid #b2ebf2;">
+              ✅ <strong>Port 50201 total:</strong> 3 transactions · 26 words
+            </div>
+
+            <!-- Grand Total -->
+            <div style="padding:16px 20px; background:linear-gradient(135deg,#e0f7fa 0%,#f0fafe 100%); border-top:2px solid #17a2b8;">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;">
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">15</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total FC03 Transactions (1 unit)</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">~123</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total Words @ 1-Second Cycle</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">~169</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">Total Words Including Slow Poll</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.4rem; font-weight:800; color:#0d6e7e;">3</div>
+                  <div style="font-size:0.72rem; color:#666; text-transform:uppercase; letter-spacing:0.5px;">TCP Connections (502, 50200, 50201)</div>
+                </div>
+              </div>
+              <div style="margin-top:12px; font-size:0.78rem; color:#555; text-align:center;">All blocks use FC03 (Read Holding Registers). Each block is a single Modbus transaction. Unused registers within a contiguous range are read but ignored by your application.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 1: Generator AC Electrical -->
+        <div class="poll-group" id="pg-gen-ac">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-gen-ac')">
+            <h4>⚡ Generator AC Electrical <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~18 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">150</td><td class="reg-name">Average Line-Line Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">180</td><td class="reg-name">Voltage L1-L2</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">181</td><td class="reg-name">Voltage L2-L3</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">182</td><td class="reg-name">Voltage L3-L1</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">183</td><td class="reg-name">Voltage L1-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">184</td><td class="reg-name">Voltage L2-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">185</td><td class="reg-name">Voltage L3-N</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">152</td><td class="reg-name">Average Current</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">186</td><td class="reg-name">Current L1</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">187</td><td class="reg-name">Current L2</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">188</td><td class="reg-name">Current L3</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">157</td><td class="reg-name">Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">159</td><td class="reg-name">Average Power Factor</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',25)">§7.0 p.25</span></td></tr>
+                <tr><td class="reg-num">189</td><td class="reg-name">Power Factor L1</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">190</td><td class="reg-name">Power Factor L2</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+                <tr><td class="reg-num">191</td><td class="reg-name">Power Factor L3</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',26)">§7.0 p.26</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P4</span> Read(150, 10) — averages + power + freq + PF &nbsp;·&nbsp;
+              <span class="block-id-sm">P5</span> Read(180, 12) — all per-phase data
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 2: Generator Power -->
+        <div class="poll-group" id="pg-gen-pwr">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-gen-pwr')">
+            <h4>🔋 Generator Power (Real / Reactive / Apparent) <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">6 registers (3×2-word) · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">155–156</td><td class="reg-name">Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">205–206</td><td class="reg-name">Reactive Power (kVAR)</td><td class="reg-words">2</td><td class="reg-scaling">1 VAR/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">202–203</td><td class="reg-name">Apparent Power (kVA)</td><td class="reg-words">2</td><td class="reg-scaling">1 VA/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P4</span> Read(150, 10) — includes Real Power at 155–156 &nbsp;·&nbsp;
+              <span class="block-id-sm">P6</span> Read(202, 5) — Apparent + Reactive power
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 3: Operating State & Breaker Status -->
+        <div class="poll-group" id="pg-state">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-state')">
+            <h4>🔀 Operating State &amp; Breaker Status <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~10 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">229</td><td class="reg-name">Generator Circuit Breaker Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Open, 1=Closed, 2=Error, 3=Disabled/NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">230</td><td class="reg-name">Operating Mode</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Manual, 2=Auto, 3=Test</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">228</td><td class="reg-name">Genset Available Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Not Available, 1=Available, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">730</td><td class="reg-name">Dead Bus Arb (DBA) State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — see manual for full states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">731</td><td class="reg-name">Dead Bus Arb Last Fail Reason</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated failure codes</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">738</td><td class="reg-name">Synchronize Mode / State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated sync states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',29)">§7.0 p.29</span></td></tr>
+                <tr><td class="reg-num">231</td><td class="reg-name">Genset Auto Start State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Stopped, Cranking, Running, Cooldown…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">232</td><td class="reg-name">Engine Run Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Running, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+                <tr><td class="reg-num">40</td><td class="reg-name">Battery Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1/20 V/bit, 0 offset (0–3276 V)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',28)">§7.0 p.28</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P2</span> Read(40, 1) — battery &nbsp;·&nbsp;
+              <span class="block-id-sm">P7</span> Read(228, 5) — genset available through engine run &nbsp;·&nbsp;
+              <span class="block-id-sm">P8</span> Read(730, 9) — DBA + sync mode
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 4: Engine Sensor Data (200G) -->
+        <div class="poll-group" id="pg-engine">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-engine')">
+            <h4>🛢️ Engine Sensor Data <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~12 registers · Port 502 · 200G column</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">154</td><td class="reg-name">Engine Speed (RPM)</td><td class="reg-words">1</td><td class="reg-scaling">0.125 rpm/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',39)">§7.2 p.39</span></td></tr>
+                <tr><td class="reg-num">41</td><td class="reg-name">Oil Pressure</td><td class="reg-words">1</td><td class="reg-scaling">1/128 psi/bit, 0 offset (0–511 psi)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',40)">§7.3 p.40</span></td></tr>
+                <tr><td class="reg-num">59</td><td class="reg-name">Oil Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',40)">§7.3 p.40</span></td></tr>
+                <tr><td class="reg-num">42</td><td class="reg-name">Coolant Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset (–273 to 1775°F)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',41)">§7.4 p.41</span></td></tr>
+                <tr><td class="reg-num">43</td><td class="reg-name">Fuel Level</td><td class="reg-words">1</td><td class="reg-scaling">1/2.56 %/bit, 0 offset (0–100%)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',39)">§7.2 p.39</span></td></tr>
+                <tr><td class="reg-num">57</td><td class="reg-name">Exhaust Temperature L-Bank</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',42)">§7.5 p.42</span></td></tr>
+                <tr><td class="reg-num">58</td><td class="reg-name">Exhaust Temperature R-Bank</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',42)">§7.5 p.42</span></td></tr>
+                <tr><td class="reg-num">46</td><td class="reg-name">Intake Manifold Air Temperature</td><td class="reg-words">1</td><td class="reg-scaling">1/32 °F/bit, –273 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',43)">§7.6 p.43</span></td></tr>
+                <tr><td class="reg-num">49</td><td class="reg-name">Turbocharger Boost Pressure</td><td class="reg-words">1</td><td class="reg-scaling">1/128 psi/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',44)">§7.7 p.44</span></td></tr>
+                <tr><td class="reg-num">65</td><td class="reg-name">Engine Hours</td><td class="reg-words">2</td><td class="reg-scaling">0.05 hr/bit, 0 offset (0–210,554,060.75 hr)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',47)">§7.10 p.47</span></td></tr>
+                <tr><td class="reg-num">62</td><td class="reg-name">Fuel Consumption Rate</td><td class="reg-words">1</td><td class="reg-scaling">0.05 L/hr per bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',47)">§7.10 p.47</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks (200G controller IP):</strong>
+              <span class="block-id-sm">G1</span> Read(41, 9) — oil/coolant/fuel/intake/turbo &nbsp;·&nbsp;
+              <span class="block-id-sm">G2</span> Read(57, 10) — exhaust/oil temp/fuel rate/hours &nbsp;·&nbsp;
+              <span class="block-id-sm">G3</span> Read(154, 1) — engine speed
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 5: Alarm Groups & Events -->
+        <div class="poll-group" id="pg-alarms">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-alarms')">
+            <h4>🚨 Alarms &amp; Events <span class="poll-badge">1 SEC</span></h4>
+            <div><span class="poll-count">~16 registers · Port 502 &amp; 50201</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">101</td><td class="reg-name">User Alarm Group A</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">102</td><td class="reg-name">User Alarm Group B</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">103</td><td class="reg-name">User Alarm Group C</td><td class="reg-words">1</td><td class="reg-scaling">16-bit packed: Bit 0–15 = Events #1–#16</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">104–110</td><td class="reg-name">User Alarm Groups D–J</td><td class="reg-words">7</td><td class="reg-scaling">16-bit packed each (160 total configurable alarms)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',53)">§8.4 p.53</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">System Event Lamp Status</td><td class="reg-words">1</td><td class="reg-scaling">Bits 3:2 Amber Lamp, Bits 1:0 Red Lamp</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">3</td><td class="reg-name">System Horn Active Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True, 2=Error, 3=Disabled</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">4</td><td class="reg-name">Hard Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">Boolean active/inactive</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+                <tr><td class="reg-num">5</td><td class="reg-name">Soft Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">Boolean active/inactive</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.3 p.52</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P1</span> Read(2, 4) — lamp/horn/shutdown &nbsp;·&nbsp;
+              <span class="block-id-sm">P3</span> Read(101, 10) — all alarm groups in one read
+            </div>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Tip:</strong> Configure User Alarm Groups A–J in Cat ET to map your most critical SPN-FMI events into bit-packed words. This lets you monitor up to 160 alarms with just 10 register reads — far more efficient than polling individual event logs.
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 6: Load Share & Load Demand (LSLD) -->
+        <div class="poll-group" id="pg-lsld">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-lsld')">
+            <h4>⚖️ Load Share &amp; Load Sense Load Demand (LSLD) <span class="poll-badge">1–2 SEC</span></h4>
+            <div><span class="poll-count">~20 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">764</td><td class="reg-name">Load Share / Control State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated load control states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',36)">§7.1 p.36</span></td></tr>
+                <tr><td class="reg-num">1805</td><td class="reg-name">Generator Real Load Control State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Isochronous, Base Load, Droop…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',36)">§7.1 p.36</span></td></tr>
+                <tr><td class="reg-num">1737</td><td class="reg-name">Gen Real Load Control Base Load Setpoint</td><td class="reg-words">1</td><td class="reg-scaling">% of rated — see §10 Grid Code</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',60)">§10 p.60</span></td></tr>
+                <tr><td class="reg-num">1466</td><td class="reg-name">LSLD State</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated — Idle, Adding, Removing, Shed…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1467</td><td class="reg-name">LSLD Desired Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset (0–32)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">750</td><td class="reg-name">System — Number of Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">751</td><td class="reg-name">System — Number of Units Available</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">752</td><td class="reg-name">System — Number of EPS Units Online</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">753</td><td class="reg-name">System — Number of EPS Units Available</td><td class="reg-words">1</td><td class="reg-scaling">1/bit count</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">756–757</td><td class="reg-name">System Total Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">758</td><td class="reg-name">System Total Percent Load</td><td class="reg-words">1</td><td class="reg-scaling">0.4 %/bit, 0 offset (0–100%)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',33)">§7.1 p.33</span></td></tr>
+                <tr><td class="reg-num">1465</td><td class="reg-name">LSLD Priority Mode</td><td class="reg-words">1</td><td class="reg-scaling">First On-First Off, Hourmeter, Manual, FIFO-EPS…</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1468</td><td class="reg-name">LSLD Add Timer Remaining</td><td class="reg-words">1</td><td class="reg-scaling">1 s/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+                <tr><td class="reg-num">1469</td><td class="reg-name">LSLD Remove Timer Remaining</td><td class="reg-words">1</td><td class="reg-scaling">1 s/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',34)">§7.1 p.34</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P9</span> Read(750, 31) — system totals 750–758 &nbsp;·&nbsp;
+              <span class="block-id-sm">P15</span> Read(1465, 5) — LSLD state &amp; timers &nbsp;·&nbsp;
+              <span class="block-id-sm">P16</span> Read(1737, 1) &nbsp;·&nbsp;
+              <span class="block-id-sm">P17</span> Read(1805, 1)
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 7: Per-Unit Paralleling Data (Gen #1) -->
+        <div class="poll-group" id="pg-parallel">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-parallel')">
+            <h4>🔗 Per-Unit Paralleling Data (Gen #1 Example) <span class="poll-badge">1–2 SEC</span></h4>
+            <div><span class="poll-count">~22 regs per unit × N units · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">759</td><td class="reg-name">Gen #1 — Warning Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">760</td><td class="reg-name">Gen #1 — Shutdown Status</td><td class="reg-words">1</td><td class="reg-scaling">0=False, 1=True</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">761</td><td class="reg-name">Gen #1 — DBA Status</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated DBA states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">762</td><td class="reg-name">Gen #1 — Load Share Status</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated load share states</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">763</td><td class="reg-name">Gen #1 — Average Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">764</td><td class="reg-name">Gen #1 — Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">765–766</td><td class="reg-name">Gen #1 — Real Power</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2B offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">767</td><td class="reg-name">Gen #1 — Breaker Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Open, 1=Closed, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">768</td><td class="reg-name">Gen #1 — Operating Mode</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Manual, 2=Auto, 3=Test</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">769</td><td class="reg-name">Gen #1 — Genset Available</td><td class="reg-words">1</td><td class="reg-scaling">0=Not Available, 1=Available</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">770</td><td class="reg-name">Gen #1 — Engine Run Status</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Running</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+                <tr><td class="reg-num">780</td><td class="reg-name">Gen #1 — % Rated kW Load</td><td class="reg-words">1</td><td class="reg-scaling">0.4 %/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',37)">§7.1 p.37</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P9</span> Read(750, 9 + 22×N) — entire system + per-unit data in one transaction per ≤5 units
+            </div>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Block read pattern:</strong> Gen #1 = regs 759–780 (22 words). Gen #2 starts at 781. Gen #N starts at 759 + (N–1) × 22. Supports up to 32 units. Read the entire block for all online units in one or two transactions.
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 8: Generator Ratings (slow) -->
+        <div class="poll-group" id="pg-ratings">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-ratings')">
+            <h4>📊 Generator Ratings &amp; Configuration <span class="poll-badge">30 SEC</span></h4>
+            <div><span class="poll-count">~7 registers · Port 502 · Read once / slow poll</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">214</td><td class="reg-name">Rated Line-Line Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">215</td><td class="reg-name">Rated Line-Neutral Voltage</td><td class="reg-words">1</td><td class="reg-scaling">1 V/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">216</td><td class="reg-name">Rated Current</td><td class="reg-words">1</td><td class="reg-scaling">1 A/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">217</td><td class="reg-name">Rated Frequency</td><td class="reg-words">1</td><td class="reg-scaling">1/128 Hz/bit</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">218–219</td><td class="reg-name">Rated Real Power (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+                <tr><td class="reg-num">220</td><td class="reg-name">Rated Power Factor</td><td class="reg-words">1</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',24)">§7.0 p.24</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P10</span> Read(208, 13) — energy meters (208–213) + ratings (214–220) in one contiguous read
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 9: Energy Meters -->
+        <div class="poll-group" id="pg-energy">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-energy')">
+            <h4>📈 Energy Meters <span class="poll-badge">5–30 SEC</span></h4>
+            <div><span class="poll-count">~8 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">208–209</td><td class="reg-name">kWh (Positive Real Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 Wh/bit, 0 offset (0–4.29B Wh)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">210–211</td><td class="reg-name">kVARh (Positive Reactive Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 VARh/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+                <tr><td class="reg-num">212–213</td><td class="reg-name">kWh (Negative Real Energy)</td><td class="reg-words">2</td><td class="reg-scaling">1 Wh/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',27)">§7.0 p.27</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P10</span> Read(208, 13) — shares a block with ratings (214–220)
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 10: I/O Status -->
+        <div class="poll-group" id="pg-io">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-io')">
+            <h4>🔌 I/O Status Registers <span class="poll-badge">5 SEC</span></h4>
+            <div><span class="poll-count">~16 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">700</td><td class="reg-name">Onboard Discrete Input Status (DI 1–12)</td><td class="reg-words">1</td><td class="reg-scaling">Bit-packed: Bit 0–11 = DI1–DI12</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">701</td><td class="reg-name">Onboard Isolated DI Status</td><td class="reg-words">1</td><td class="reg-scaling">Bit 0 = Isolated DI</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">702</td><td class="reg-name">Onboard Discrete Output Status (DO 1–12)</td><td class="reg-words">1</td><td class="reg-scaling">Bit-packed: Bit 0–11 = DO1–DO12</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">703</td><td class="reg-name">Onboard Analog Input #1 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent (configured in Cat ET)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">704</td><td class="reg-name">Onboard Analog Input #2 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">705</td><td class="reg-name">Onboard Analog Input #3 Value</td><td class="reg-words">1</td><td class="reg-scaling">Sensor-dependent</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">706–707</td><td class="reg-name">Onboard Analog Output #1 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">708–709</td><td class="reg-name">Onboard Analog Output #2 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',49)">§7.13 p.49</span></td></tr>
+                <tr><td class="reg-num">710–711</td><td class="reg-name">Onboard PWM Output #1 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+                <tr><td class="reg-num">712–713</td><td class="reg-name">Onboard PWM Output #2 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+                <tr><td class="reg-num">714–715</td><td class="reg-name">Onboard PWM Output #3 Value</td><td class="reg-words">2</td><td class="reg-scaling">Configured output value</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',50)">§7.13 p.50</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P14</span> Read(700, 16) — all onboard DI/DO/AI/AO/PWM in one read
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 11: Network & Module Status -->
+        <div class="poll-group" id="pg-network">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-network')">
+            <h4>🌐 Network &amp; Module Status <span class="poll-badge">5–30 SEC</span></h4>
+            <div><span class="poll-count">~10 registers · Port 502 &amp; 50201</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">350</td><td class="reg-name">Primary Data Link Status</td><td class="reg-words">1</td><td class="reg-scaling">00=OK, 01=Fault, 11=Disabled/NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.1 p.57</span></td></tr>
+                <tr><td class="reg-num">577–582</td><td class="reg-name">Ethernet Port A/B, 4-Wire #1–#4 Status</td><td class="reg-words">6</td><td class="reg-scaling">0=Disabled, 1=Enabled (per port)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.1 p.57</span></td></tr>
+              </tbody>
+            </table>
+            <table class="reg-table" style="border-top:2px solid #e8e8e8;">
+              <thead>
+                <tr><th>Register</th><th>Description (Port 50201)</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">1</td><td class="reg-name">Paralleling Controller Online</td><td class="reg-words">1</td><td class="reg-scaling">0=Offline, 1=Online (always True for self)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.2 p.57</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Engine ECM Online</td><td class="reg-words">1</td><td class="reg-scaling">0=Offline, 1=Online</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',57)">§9.2 p.57</span></td></tr>
+                <tr><td class="reg-num">16</td><td class="reg-name">Active Events Count — Genset Controller</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',55)">§8.6 p.55</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Active Events Count — Paralleling Ctrl</td><td class="reg-words">1</td><td class="reg-scaling">1/bit, 0 offset (Port 50201)</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',55)">§8.6 p.55</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read blocks:</strong>
+              <span class="block-id-sm">P12</span> Read(350, 1) &nbsp;·&nbsp;
+              <span class="block-id-sm">P13</span> Read(577, 6) &nbsp;·&nbsp;
+              Port 50201: <span class="block-id-sm">S1</span> Read(1, 2) &nbsp;·&nbsp;
+              <span class="block-id-sm">S2</span> Read(16, 1)
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 12: Real-Time Clock -->
+        <div class="poll-group" id="pg-clock">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-clock')">
+            <h4>🕐 Real-Time Clock <span class="poll-badge">30 SEC</span></h4>
+            <div><span class="poll-count">3 registers · Port 502</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">245</td><td class="reg-name">Date (MM/DD packed)</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+                <tr><td class="reg-num">246</td><td class="reg-name">Year</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+                <tr><td class="reg-num">247</td><td class="reg-name">Time (HH:MM:SS packed)</td><td class="reg-words">1</td><td class="reg-scaling">See §7.12 for byte decode</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',48)">§7.12 p.48</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">P11</span> Read(245, 3) — date, year, and time in one read
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 13: Write Commands Reference -->
+        <div class="poll-group" id="pg-write">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-write')">
+            <h4>✍️ Write Commands Reference (Port 50200) <span class="poll-badge">ON DEMAND</span></h4>
+            <div><span class="poll-count">Key write registers · FC16</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Scaling / Format</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">1</td><td class="reg-name">Alarm Acknowledge Command</td><td class="reg-words">1</td><td class="reg-scaling">0=FALSE, 1=TRUE</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.1 p.52</span></td></tr>
+                <tr><td class="reg-num">2</td><td class="reg-name">Reset All Events Command</td><td class="reg-words">1</td><td class="reg-scaling">0=FALSE, 1=TRUE</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',52)">§8.1 p.52</span></td></tr>
+                <tr><td class="reg-num">102</td><td class="reg-name">Auto Mode Command</td><td class="reg-words">1</td><td class="reg-scaling">Enumerated mode commands</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">103</td><td class="reg-name">Start Command</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Start, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">104</td><td class="reg-name">Stop Command</td><td class="reg-words">1</td><td class="reg-scaling">0=Off, 1=Stop, 2=Error, 3=NA</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',30)">§7.0 p.30</span></td></tr>
+                <tr><td class="reg-num">6–7</td><td class="reg-name">Base Load Setpoint (kW)</td><td class="reg-words">2</td><td class="reg-scaling">1 W/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">8–9</td><td class="reg-name">Base PF Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/16384 PF/bit, –2 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">10–11</td><td class="reg-name">Base VAR Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1 VAR/bit, –2,000,000,000 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">14–15</td><td class="reg-name">Base Voltage Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/128 V/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+                <tr><td class="reg-num">12–13</td><td class="reg-name">Base Frequency Setpoint</td><td class="reg-words">2</td><td class="reg-scaling">1/128 Hz/bit, 0 offset</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',31)">§7.0 p.31</span></td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              ⚠️ <strong>Write commands use TCP port 50200</strong> (not 502). Use FC16 (Write Multiple Registers). Two-word values: MSW at lower address, LSW at higher address. See SCADA manual §12 for worked examples.
+            </div>
+          </div>
+        </div>
+
+        <!-- Annunciator Quick-Reference -->
+        <div class="poll-group" id="pg-annunciator">
+          <div class="poll-group-header" onclick="togglePollGroup('pg-annunciator')">
+            <h4>🔔 Annunciator Status Points (Port 50201) <span class="poll-badge">2–5 SEC</span></h4>
+            <div><span class="poll-count">~23 registers · Dedicated alarm points</span> <span class="poll-toggle">▼</span></div>
+          </div>
+          <div class="poll-group-body">
+            <table class="reg-table">
+              <thead>
+                <tr><th>Register</th><th>Description</th><th>Words</th><th>Severity</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="reg-num">611</td><td class="reg-name">E-Stop Active</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">613</td><td class="reg-name">Overcrank (Failure to Start)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">614</td><td class="reg-name">Overspeed</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">618</td><td class="reg-name">High Coolant Temperature (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">621</td><td class="reg-name">Air Damper Shutdown</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">626</td><td class="reg-name">Low Oil Pressure (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">628</td><td class="reg-name">Low Coolant Level (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">623</td><td class="reg-name">High Battery Voltage (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">630</td><td class="reg-name">Low Fuel Level (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">612</td><td class="reg-name">Generator Not In Auto Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">615</td><td class="reg-name">EPS Supplying Load</td><td class="reg-words">1</td><td style="color:#2e7d32;font-weight:700;">🟢 Green</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">616</td><td class="reg-name">Overload / Load Shed</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">617</td><td class="reg-name">High Coolant Temp (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">619</td><td class="reg-name">Low Coolant Temp Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">620</td><td class="reg-name">Low Cranking Voltage</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">624</td><td class="reg-name">Low Battery Voltage Warning</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">625</td><td class="reg-name">Low Oil Pressure (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">627</td><td class="reg-name">Low Coolant Level (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">629</td><td class="reg-name">Low Fuel Level (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">631</td><td class="reg-name">Battery Charger AC Failure</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">632</td><td class="reg-name">SCR SPN 4792 (Warning)</td><td class="reg-words">1</td><td style="color:#f57f17;font-weight:700;">🟡 Amber</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+                <tr><td class="reg-num">633</td><td class="reg-name">SCR SPN 4792 (Shutdown)</td><td class="reg-words">1</td><td style="color:#d32f2f;font-weight:700;">🔴 Red</td><td><span class="reg-src reg-src-scada reg-src-page" onclick="openPdfAt('scada',54)">§8.5 p.54</span></td></tr>
+              </tbody>
+            </table>
+            <div class="block-ref">
+              📦 <strong>Read block:</strong>
+              <span class="block-id-sm">S3</span> Read(611, 23) — all 23 annunciator points in one contiguous read on port 50201
+            </div>
+            <div style="padding:12px 16px; font-size:0.78rem; color:#888; background:#f8f9fa; border-top:1px solid #eee;">
+              💡 <strong>Port 50201 registers.</strong> These are dedicated annunciator status bits — each is a simple boolean (0/1). Red = shutdown-level, Amber = warning-level, Green = informational. For custom alarm grouping, use the User Alarm Groups (regs 101–110 on port 502) instead.
+            </div>
+          </div>
+        </div>
+
+        <!-- Scaling Quick Reference -->
+        <div class="modbus-notes" style="background:#e3f2fd; border-left-color:#1565c0;">
+          <h5 style="color:#1565c0;">📐 Scaling Quick Reference</h5>
+          <ul style="columns:2; column-gap:32px;">
+            <li style="color:#333;"><strong>Voltage:</strong> raw × 1 V/bit = Volts</li>
+            <li style="color:#333;"><strong>Current:</strong> raw × 1 A/bit = Amps</li>
+            <li style="color:#333;"><strong>Frequency:</strong> raw × (1/128) = Hz</li>
+            <li style="color:#333;"><strong>Power Factor:</strong> raw × (1/16384) – 2 = PF</li>
+            <li style="color:#333;"><strong>Real Power (2-word):</strong> ((MSW≪16)|LSW) × 1 W – 2,000,000,000 = Watts</li>
+            <li style="color:#333;"><strong>Reactive Power (2-word):</strong> same as real power but VAR</li>
+            <li style="color:#333;"><strong>Apparent Power (2-word):</strong> ((MSW≪16)|LSW) × 1 VA = VA</li>
+            <li style="color:#333;"><strong>Energy (2-word):</strong> ((MSW≪16)|LSW) × 1 Wh = Wh</li>
+            <li style="color:#333;"><strong>Oil Pressure:</strong> raw × (1/128) = PSI</li>
+            <li style="color:#333;"><strong>Temperature:</strong> raw × (1/32) – 273 = °F</li>
+            <li style="color:#333;"><strong>Battery Voltage:</strong> raw × (1/20) = Volts</li>
+            <li style="color:#333;"><strong>Engine Speed:</strong> raw × 0.125 = RPM</li>
+            <li style="color:#333;"><strong>Engine Hours (2-word):</strong> ((MSW≪16)|LSW) × 0.05 = Hours</li>
+            <li style="color:#333;"><strong>Percent Load:</strong> raw × 0.4 = %</li>
+            <li style="color:#333;"><strong>Fuel Level:</strong> raw × (1/2.56) = %</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
 </div>
