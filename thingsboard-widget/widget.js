@@ -375,8 +375,8 @@ const docs = {
 
 // Current view (declared above)
 
-// Base URL for PDF files (GitHub raw or configure via widget settings)
-var PDF_BASE_URL = 'https://github.com/jamesritter03-kirby/ECS-200-Specs/raw/main/';
+// Base URL for PDF files (GitHub blob view renders PDFs inline)
+var PDF_BASE_URL = 'https://github.com/jamesritter03-kirby/ECS-200-Specs/blob/main/';
 
 // Build PDF URL with page number
 function pdfUrl(file, page) {
