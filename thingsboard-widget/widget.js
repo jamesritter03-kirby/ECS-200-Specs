@@ -375,9 +375,12 @@ const docs = {
 
 // Current view (declared above)
 
+// Base URL for PDF files (GitHub raw or configure via widget settings)
+var PDF_BASE_URL = 'https://github.com/jamesritter03-kirby/ECS-200-Specs/raw/main/';
+
 // Build PDF URL with page number
 function pdfUrl(file, page) {
-  return encodeURIComponent(file) + '#page=' + page;
+  return PDF_BASE_URL + encodeURIComponent(file) + '#page=' + page;
 }
 
 // Open PDF at a specific page
