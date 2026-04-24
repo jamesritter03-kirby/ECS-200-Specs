@@ -1,0 +1,225 @@
+<div class="ecs200-widget">
+  <!-- Tab Navigation -->
+  <div class="ecs-tabs">
+    <button class="ecs-tab active" data-tab="overview">📋 Overview</button>
+    <button class="ecs-tab" data-tab="blocks">📦 Read Blocks</button>
+    <button class="ecs-tab" data-tab="registers">📊 Register Map</button>
+    <button class="ecs-tab" data-tab="practices">⚡ Best Practices</button>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div class="ecs-panel active" id="tab-overview">
+    <div class="ecs-conn-grid">
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Read Port</div>
+        <div class="ecs-conn-value">TCP 502</div>
+        <div class="ecs-conn-note">Modbus TCP — Read registers (FC03)</div>
+      </div>
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Write Port</div>
+        <div class="ecs-conn-value">TCP 50200</div>
+        <div class="ecs-conn-note">Commands &amp; setpoints (FC16)</div>
+      </div>
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Status Port</div>
+        <div class="ecs-conn-value">TCP 50201</div>
+        <div class="ecs-conn-note">Events, annunciator, module status</div>
+      </div>
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Function Codes</div>
+        <div class="ecs-conn-value">03 / 16</div>
+        <div class="ecs-conn-note">Read Holding / Write Multiple</div>
+      </div>
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Max per Read</div>
+        <div class="ecs-conn-value">125 regs</div>
+        <div class="ecs-conn-note">Per single FC03 transaction</div>
+      </div>
+      <div class="ecs-conn-box">
+        <div class="ecs-conn-label">Byte Order</div>
+        <div class="ecs-conn-value">Big-Endian</div>
+        <div class="ecs-conn-note">MSW at lower address</div>
+      </div>
+    </div>
+
+    <div class="ecs-poll-cards">
+      <div class="ecs-poll-card">
+        <div class="ecs-pc-rate">1 s</div>
+        <div class="ecs-pc-label">Critical Real-Time</div>
+        <div class="ecs-pc-detail">AC power, V, I, Hz, breaker, state</div>
+      </div>
+      <div class="ecs-poll-card">
+        <div class="ecs-pc-rate">1 s</div>
+        <div class="ecs-pc-label">Engine &amp; Protection</div>
+        <div class="ecs-pc-detail">Oil psi, coolant °F, battery, alarms</div>
+      </div>
+      <div class="ecs-poll-card">
+        <div class="ecs-pc-rate">1–2 s</div>
+        <div class="ecs-pc-label">Paralleling / Load Mgmt</div>
+        <div class="ecs-pc-detail">DBA, sync, load share, LSLD</div>
+      </div>
+      <div class="ecs-poll-card">
+        <div class="ecs-pc-rate">5–30 s</div>
+        <div class="ecs-pc-label">Slow-Changing Data</div>
+        <div class="ecs-pc-detail">Energy, hours, I/O, network, clock</div>
+      </div>
+    </div>
+
+    <div class="ecs-scaling-ref">
+      <h4>🔢 Common Scaling Reference</h4>
+      <table class="ecs-ref-table">
+        <thead><tr><th>Measurement</th><th>Scale</th><th>Offset</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>Voltage (V)</td><td>1 V/bit</td><td>0</td><td>raw × 1</td></tr>
+          <tr><td>Current (A)</td><td>1 A/bit</td><td>0</td><td>raw × 1</td></tr>
+          <tr><td>Frequency (Hz)</td><td>1/128 Hz/bit</td><td>0</td><td>raw ÷ 128</td></tr>
+          <tr><td>Power Factor</td><td>1/16384 /bit</td><td>−2</td><td>(raw ÷ 16384) − 2</td></tr>
+          <tr><td>Real Power (W)</td><td>1 W/bit (32-bit)</td><td>−2 000 000 000</td><td>((MSW≪16)|LSW) − 2B</td></tr>
+          <tr><td>Oil Pressure (psi)</td><td>1/128 psi/bit</td><td>0</td><td>raw ÷ 128</td></tr>
+          <tr><td>Temperature (°F)</td><td>1/32 °F/bit</td><td>−273</td><td>(raw ÷ 32) − 273</td></tr>
+          <tr><td>Engine Speed (rpm)</td><td>0.125 rpm/bit</td><td>0</td><td>raw × 0.125</td></tr>
+          <tr><td>Fuel Level (%)</td><td>1/2.56 %/bit</td><td>0</td><td>raw ÷ 2.56</td></tr>
+          <tr><td>Fuel Rate (L/hr)</td><td>0.05 L/hr/bit</td><td>0</td><td>raw × 0.05</td></tr>
+          <tr><td>Engine Hours</td><td>0.05 hr/bit (32-bit)</td><td>0</td><td>((MSW≪16)|LSW) × 0.05</td></tr>
+          <tr><td>Energy (Wh)</td><td>1 Wh/bit (32-bit)</td><td>0</td><td>((MSW≪16)|LSW) × 1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BLOCK PLAN TAB -->
+  <div class="ecs-panel" id="tab-blocks">
+    <div class="ecs-block-section">
+      <h4 class="ecs-bsec-title" style="border-color:#2196F3;">🔵 Port 502 — 200P — Fast (1 s)</h4>
+      <table class="ecs-block-table">
+        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ecs-bid">P1</span></td><td>Read(2, 4)</td><td>4</td><td><b>2</b> Event Lamp · <b>3</b> Horn · <b>4</b> Hard SD · <b>5</b> Soft SD</td></tr>
+          <tr><td><span class="ecs-bid">P2</span></td><td>Read(40, 1)</td><td>1</td><td><b>40</b> Battery Voltage</td></tr>
+          <tr><td><span class="ecs-bid">P3</span></td><td>Read(101, 10)</td><td>10</td><td><b>101–110</b> User Alarm Groups A–J (160 alarm bits)</td></tr>
+          <tr><td><span class="ecs-bid">P4</span></td><td>Read(150, 10)</td><td>10</td><td><b>150</b> Avg V · <b>152</b> Avg I · <b>155–156</b> kW (2w) · <b>157</b> Hz · <b>159</b> PF</td></tr>
+          <tr><td><span class="ecs-bid">P5</span></td><td>Read(180, 12)</td><td>12</td><td><b>180–182</b> V LL · <b>183–185</b> V LN · <b>186–188</b> I · <b>189–191</b> PF per phase</td></tr>
+          <tr><td><span class="ecs-bid">P6</span></td><td>Read(202, 5)</td><td>5</td><td><b>202–203</b> kVA (2w) · <b>205–206</b> kVAR (2w)</td></tr>
+          <tr><td><span class="ecs-bid">P7</span></td><td>Read(228, 5)</td><td>5</td><td><b>228</b> Avail · <b>229</b> Bkr · <b>230</b> Mode · <b>231</b> Start · <b>232</b> Run</td></tr>
+          <tr><td><span class="ecs-bid">P8</span></td><td>Read(730, 9)</td><td>9</td><td><b>730</b> DBA State · <b>731</b> DBA Fail · <b>738</b> Sync Mode</td></tr>
+          <tr><td><span class="ecs-bid">P9</span></td><td>Read(750, 31)</td><td>31+</td><td><b>750–754</b> Online/Avail · <b>756–758</b> Sys kW/% · <b>759–780</b> Gen #1 block</td></tr>
+        </tbody>
+      </table>
+      <div class="ecs-block-summary">✅ 9 transactions · ~77 words (1 unit) — fits in 1-second cycle</div>
+    </div>
+
+    <div class="ecs-block-section">
+      <h4 class="ecs-bsec-title" style="border-color:#4CAF50;">🟢 Port 502 — 200P — Slow (5–30 s)</h4>
+      <table class="ecs-block-table">
+        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ecs-bid">P10</span></td><td>Read(208, 13)</td><td>13</td><td><b>208–213</b> Energy kWh/kVARh (3×2w) · <b>214–220</b> Ratings V/I/Hz/kW/PF</td></tr>
+          <tr><td><span class="ecs-bid">P11</span></td><td>Read(245, 3)</td><td>3</td><td><b>245</b> Date · <b>246</b> Year · <b>247</b> Time</td></tr>
+          <tr><td><span class="ecs-bid">P12</span></td><td>Read(350, 1)</td><td>1</td><td><b>350</b> Data Link Status</td></tr>
+          <tr><td><span class="ecs-bid">P13</span></td><td>Read(577, 6)</td><td>6</td><td><b>577–582</b> Ethernet Port Status (2-wire + 4-wire)</td></tr>
+          <tr><td><span class="ecs-bid">P14</span></td><td>Read(700, 16)</td><td>16</td><td><b>700–701</b> DI · <b>702</b> DO · <b>703–715</b> AI/AO/PWM</td></tr>
+          <tr><td><span class="ecs-bid">P15</span></td><td>Read(1465, 5)</td><td>5</td><td><b>1465</b> LSLD Priority · <b>1466</b> LSLD State · <b>1467–1469</b> Timers</td></tr>
+          <tr><td><span class="ecs-bid">P16</span></td><td>Read(1737, 1)</td><td>1</td><td><b>1737</b> Base Load Setpoint</td></tr>
+          <tr><td><span class="ecs-bid">P17</span></td><td>Read(1805, 1)</td><td>1</td><td><b>1805</b> Load Control State</td></tr>
+        </tbody>
+      </table>
+      <div class="ecs-block-summary">✅ 8 transactions · 46 words — poll every 5–30 seconds</div>
+    </div>
+
+    <div class="ecs-block-section">
+      <h4 class="ecs-bsec-title" style="border-color:#FF9800;">🟠 Port 502 — 200G (Genset/Engine)</h4>
+      <table class="ecs-block-table">
+        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ecs-bid">G1</span></td><td>Read(41, 9)</td><td>9</td><td><b>41</b> Oil psi · <b>42</b> Coolant °F · <b>43</b> Fuel% · <b>44</b> Coolant Lvl · <b>49</b> Turbo</td></tr>
+          <tr><td><span class="ecs-bid">G2</span></td><td>Read(57, 10)</td><td>10</td><td><b>57–58</b> Exhaust L/R · <b>59</b> Oil °F · <b>62</b> Fuel Rate · <b>65–66</b> Hours (2w)</td></tr>
+          <tr><td><span class="ecs-bid">G3</span></td><td>Read(154, 1)</td><td>1</td><td><b>154</b> Engine RPM</td></tr>
+        </tbody>
+      </table>
+      <div class="ecs-block-summary">✅ 3 transactions · 20 words — poll every 1 second</div>
+    </div>
+
+    <div class="ecs-block-section">
+      <h4 class="ecs-bsec-title" style="border-color:#E91E63;">🔴 Port 50201 — Status &amp; Annunciator</h4>
+      <table class="ecs-block-table">
+        <thead><tr><th>Block</th><th>FC03 Call</th><th>Words</th><th>Key Registers</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ecs-bid">S1</span></td><td>Read(1, 2)</td><td>2</td><td><b>1</b> Controller Online · <b>2</b> ECM Online</td></tr>
+          <tr><td><span class="ecs-bid">S2</span></td><td>Read(16, 1)</td><td>1</td><td><b>16</b> Active Event Count</td></tr>
+          <tr><td><span class="ecs-bid">S3</span></td><td>Read(611, 23)</td><td>23</td><td><b>611</b> E-Stop · <b>613</b> Overcrank · <b>614</b> Overspeed · <b>617–618</b> Coolant Hi · <b>625–626</b> Oil Lo · etc.</td></tr>
+        </tbody>
+      </table>
+      <div class="ecs-block-summary">✅ 3 transactions · 26 words — poll every 1–2 seconds</div>
+    </div>
+  </div>
+
+  <!-- REGISTER MAP TAB -->
+  <div class="ecs-panel" id="tab-registers">
+    <div class="ecs-search-box">
+      <input type="text" class="ecs-search" placeholder="🔍 Filter registers by name, number, or description...">
+    </div>
+    <div class="ecs-reg-groups" id="ecs-reg-container"></div>
+  </div>
+
+  <!-- BEST PRACTICES TAB -->
+  <div class="ecs-panel" id="tab-practices">
+    <div class="ecs-practice-list">
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">📦</div>
+        <div>
+          <h5>Batch Reads</h5>
+          <p>Read contiguous register blocks in a single FC03 transaction (up to 125 registers). The block plan tab defines all optimized read groups.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">⏱</div>
+        <div>
+          <h5>Data Prioritization</h5>
+          <p>Poll critical registers (power, breaker, alarms) every 1 s. Slow-changing data (energy, hours, I/O) every 5–30 s. Use User Alarm Groups (regs 101–110) for event-driven alerting.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">🔗</div>
+        <div>
+          <h5>Persistent Connections</h5>
+          <p>Keep TCP connections open. Do not create a new socket per transaction. ThingsBoard Modbus connector handles this automatically.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">🔄</div>
+        <div>
+          <h5>Retry with Limits</h5>
+          <p>Implement retries for failed reads. Limit to 2–3 attempts with 1000–3000 ms timeouts. Mark stale data if all retries fail.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">📐</div>
+        <div>
+          <h5>Two-Word (32-bit) Registers</h5>
+          <p>Power and energy registers are 32-bit (2 words). MSW is at the lower address. Combine as: <code>value = (MSW &lt;&lt; 16) | LSW</code>, then apply scaling and offset.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">🔧</div>
+        <div>
+          <h5>ThingsBoard Modbus Connector Config</h5>
+          <p>In <code>tb-gateway</code> Modbus connector, use <code>"type": "holding"</code>, <code>"functionCode": 3</code>. For 32-bit: set <code>"objectsCount": 2</code> and <code>"byteOrder": "BIG"</code>. Map each register to a telemetry key matching the block plan above.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">🏷</div>
+        <div>
+          <h5>Suggested Telemetry Key Names</h5>
+          <p>Use consistent keys for dashboard binding: <code>gen_avg_voltage</code>, <code>gen_avg_current</code>, <code>gen_frequency</code>, <code>gen_real_power_kw</code>, <code>gen_pf</code>, <code>engine_speed_rpm</code>, <code>oil_pressure_psi</code>, <code>coolant_temp_f</code>, <code>fuel_level_pct</code>, <code>breaker_status</code>, <code>operating_mode</code>, <code>engine_hours</code>.</p>
+        </div>
+      </div>
+      <div class="ecs-practice">
+        <div class="ecs-p-icon">⚠️</div>
+        <div>
+          <h5>Write Operations (Port 50200)</h5>
+          <p>Use FC16 (Write Multiple Registers) on port 50200. NEVER enable write access without proper authentication and operator-level permissions. Write commands include alarm acknowledge, mode control, start/stop, and setpoint adjustments.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
